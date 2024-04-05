@@ -191,26 +191,8 @@ dataset_fields:
   choices:
   - value: en
     label: English
-  - value: fr
-    label: French
-
-- field_name: frequency
-  label: Frequency
-  validators: ignore_missing
-  preset: select
-  choices:
-  - value: daily
-    label: Daily
-  - value: weekly
-    label: Weekly
-  - value: monthly
-    label: Monthly
-  - value: quorterly
-    label: Quorterly
-  - value: yearly
-    label: Yearly
-  - value: never
-    label: Never
+  - value: nor
+    label: Norwegian
 
 - field_name: conforms_to
   label: Conforms to
@@ -312,17 +294,6 @@ dataset_fields:
   label: License
   form_snippet: license.html
   help_text: License definitions and additional information can be found at http://opendefinition.org/
-
-- field_name: availability
-  label: Availability
-  preset: select
-  choices:
-  - value: 1_year
-    label: 1 Year
-  - value: 5_years
-    label: 5 Years
-  - value: 10_years
-    label: 10 Years
 
 - field_name: release_date
   label: Release date
