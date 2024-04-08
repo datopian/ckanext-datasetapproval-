@@ -29,9 +29,16 @@ def is_user_admin_of_org(org_id, user_id):
 
 
 def publishing_check(context, data_dict):
-    if context.get("allow_publish") or data_dict.get("state") == "inreview":
-        return data_dict
-    data_dict["state"] = "draft"
+    user_id = (
+        tk.current_user.id
+        if tk.current_user and not tk.current_user.is_anonymous
+        else None
+    )
+    org_id = data_dict.get("owner_org")
+    is_active = data_dict.get("state") in ["active", "publish", None, False]
+    if (is_user_is_editor(org_id, user_id) or is_unowned_dataset(org_id)) and is_active:
+        mailer.mail_package_review_request_to_admins(context, data_dict)
+        data_dict["state"] = "inreview"
     return data_dict
 
 def _add_or_update_org(context, package_dict):
