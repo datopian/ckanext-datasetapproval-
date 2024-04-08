@@ -11,5 +11,8 @@ def is_dataset_owner(data_dict, user_id):
     """
     Check if the dataset belongs to the user
     """
-    dataset = tk.get_action("package_show")(data_dict={"id": data_dict.get("id")})
-    return dataset["creator_user_id"] == user_id
+    try:
+        dataset = tk.get_action("package_show")(data_dict={"id": data_dict.get("id")})
+        return dataset["creator_user_id"] == user_id
+    except Exception as e:
+        return False
