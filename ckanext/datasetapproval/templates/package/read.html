@@ -1,5 +1,8 @@
 {% ckan_extends %}
 
+{% set user_roles = h.get_dataset_current_user_permissions(pkg_dict) %}
+{% set user_can_write = user_roles.get("can_write", False) %}
+
 {% block package_description %}
     {% if (c.pkg_dict.state  == "inreview") and h.check_access("dataset_review",{"dataset_id":c.pkg_dict.id }) %}
     <div class="alert alert-warning" role="alert">
@@ -13,7 +16,8 @@
         </a>
     </div>    
     </div>  
-    {% elif  c.pkg_dict.state == "inreview" and h.is_dataset_owner(c.pkg_dict, c.userobj.id) %}
+
+    {% elif  c.pkg_dict.state == "inreview" and user_can_write %}
     <div class="alert alert-warning" role="alert">
         <p>{{ _("This dataset is waiting for an administrator to review.") }}</p>    
     </div>

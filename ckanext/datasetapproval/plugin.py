@@ -41,6 +41,7 @@ class DatasetapprovalPlugin(
     def get_helpers(self):
         return {
             "is_dataset_owner": helpers.is_dataset_owner,
+            "get_dataset_current_user_permissions": helpers.get_dataset_current_user_permissions
         }
 
     # IBlueprint
@@ -57,16 +58,33 @@ class DatasetapprovalPlugin(
         }
 
     def get_dataset_labels(self, dataset_obj):
-        labels = super(DatasetapprovalPlugin, self).get_dataset_labels(dataset_obj)
-        user_id = None
-        if tk.current_user and tk.current_user.is_authenticated:
-            user_id = tk.c.userobj.id
+        # Override CKAN core
+        labels = []
+        if dataset_obj.state == u'active' and not dataset_obj.private:
+            labels.append(u'public')
 
-        capacity = authz.users_role_for_group_or_org(dataset_obj.owner_org, user_id)
-        is_org_admin = capacity == "admin"
-        # Editor shouldn't be able to collaborate on a dataset
-        if dataset_obj.creator_user_id != user_id and dataset_obj.state not in [
-            "active"
-        ] and not is_org_admin:
-            return []
+        if authz.check_config_permission('allow_dataset_collaborators'):
+            # Add a generic label for all this dataset collaborators
+            labels.append(u'collaborator-%s' % dataset_obj.id)
+        else:
+            labels = []
+
+        if dataset_obj.owner_org:
+            labels.append(u'member-%s' % dataset_obj.owner_org)
+        else:
+            labels.append(u'creator-%s' % dataset_obj.creator_user_id)
+
+        # End of override
+
+        # user_id = None
+        # if tk.current_user and tk.current_user.is_authenticated:
+        #     user_id = tk.c.userobj.id
+        #
+        # capacity = authz.users_role_for_group_or_org(dataset_obj.owner_org, user_id)
+        # is_org_admin = capacity == "admin"
+        # # Editor shouldn't be able to collaborate on a dataset
+        # if dataset_obj.creator_user_id != user_id and dataset_obj.get("state") not in [
+        #     "active"
+        # ] and not is_org_admin:
+        #     return []
         return labels

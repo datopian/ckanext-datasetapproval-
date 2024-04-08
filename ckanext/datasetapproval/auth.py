@@ -1,6 +1,7 @@
 import logging
 from ckan.plugins import toolkit as tk
 import ckan.authz as authz
+import ckanext.datasetapproval.helpers as h
 from ckan.logic.auth.update import package_update as core_package_update
 
 log = logging.getLogger(__name__)
@@ -24,19 +25,37 @@ def dataset_review(context, data_dict):
 
 @tk.auth_allow_anonymous_access
 def package_update(context, data_dict):
-    # This check doesn't allow to edit dataset
-    # which is in alredy in review state
     if data_dict:
         previous_data_dict = tk.get_action("package_show")(
-            context, {"id": data_dict.get("id")}
-        )
+                context, {"id": data_dict.get("id")}
+                )
+
+        user_dataset_permissions = h.get_dataset_current_user_permissions(previous_data_dict)
+
+        # This check doesn't allow to edit dataset
+        # which is in alredy in review state
         if (
             previous_data_dict.get("state") == "inreview"
-            and previous_data_dict.get("creator_user_id") == tk.current_user.id
+            and (
+                user_dataset_permissions.get("is_collaborator", False)
+                or user_dataset_permissions.get("is_creator", False)
+            )
         ):
             return {
                 "success": False,
                 "msg": "User cannot update dataset while it is in review",
             }
+
+        # In order to be able to edit a dataset, user must be
+        # a sysadmin, owner or collaborator
+        # TODO: implement archive manager
+        response = { 
+            "success": user_dataset_permissions.get("can_write", False)
+        }
+
+        if not response.get("success"):
+            response["msg"] = "User is not authorized to edit dataset"
+
+        return response
 
     return core_package_update(context, data_dict)

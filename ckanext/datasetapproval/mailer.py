@@ -11,11 +11,18 @@ log = logging.getLogger(__name__)
 
 
 def mail_package_review_request_to_admins(context, data_dict, _type="new"):
-    members = core_member_list(
-        context=context, data_dict={"id": data_dict.get("owner_org")}
-    )
-    org_admin = [i[0] for i in members if i[2] == "Admin"]
+    owner_org = data_dict.get("owner_org")
+    org_admin = []
 
+    if owner_org:
+        # NOTE: likely won't ever run because CKAN core
+        # organizations are no longer being used
+        members = core_member_list(
+            context=context, data_dict={"id": data_dict.get("owner_org")}
+        )
+        org_admin = [i[0] for i in members if i[2] == "Admin"]
+
+    # TODO: find users with approval permission
     sysadmins = (
         model.Session.query(model.User.id)
         .filter(model.User.state != model.State.DELETED, model.User.sysadmin == True)

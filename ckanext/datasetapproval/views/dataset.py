@@ -91,7 +91,7 @@ class EditView(BaseEditView):
         user = current_user.name
 
         try:
-            tk.check_access("package_update", context)
+            tk.check_access("package_update", context, pkg_dict)
         except tk.NotAuthorized:
             return tk.base.abort(
                 403, tk._("User %r not authorized to edit %s") % (user, id)

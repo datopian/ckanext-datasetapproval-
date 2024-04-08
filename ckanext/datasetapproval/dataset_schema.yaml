@@ -310,7 +310,7 @@ dataset_fields:
   label: Publishing Status
   form_snippet: null
   display_snippet: null
-  validators: ignore_missing publishing_status_validator
+  validators: ignore_missing 
 
 - field_name: terms_agreed
   label: Terms
