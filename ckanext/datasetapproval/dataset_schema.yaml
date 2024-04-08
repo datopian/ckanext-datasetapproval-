@@ -16,9 +16,20 @@ dataset_fields:
   preset: dataset_slug
   form_placeholder: eg. my-dataset
 
-- field_name: owner_org
+- field_name: organization 
   label: Organization
-  preset: dataset_organization
+  form_snippet: text.html #TODO: this should be a complete with autoselect, c.f. tags
+  display_snippet: text.html
+
+# - field_name: private 
+#   label: Visibility 
+#   preset: select
+#   validators: not_empty unicode_safe
+#   choices:
+#   - value: "True" 
+#     label: "Private"
+#   - value: "False"
+#     label: "Public"
 
 - field_name: tag_string
   label: Keywords
@@ -305,7 +316,7 @@ dataset_fields:
   display_snippet: text.html
   form_snippet: null
 
-
+# TODO: deprecate this field
 - field_name: publishing_status
   label: Publishing Status
   form_snippet: null
