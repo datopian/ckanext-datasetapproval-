@@ -45,7 +45,8 @@ def publishing_check(context, data_dict):
 
     # if sysadmin is updating the dataset and it's already in review state
     # then it should remain in review state
-    if data_dict.get("id"):
+    _action_review = context.get("_action_review", False)
+    if not _action_review and data_dict.get("id"):
         old_data_dict = tk.get_action("package_show")(
             context, {"id": data_dict.get("id")}
         )
@@ -90,8 +91,11 @@ def dataset_review(context, data_dict):
     states = {"reject": "rejected", "approve": "active"}
     mailer.mail_package_approve_reject_notification_to_editors(id, action)
     try:
-        result = tk.get_action("package_patch")(
-            context,
+        tk.get_action("package_patch")(
+            {
+                **context,
+                "_action_review": True,
+            },
             {"id": id, "state": states[action]},
         )
         log.error(result)

@@ -63,6 +63,7 @@ class DatasetReviewView(MethodView):
             "include_drafts": True,
             "rows": limit,
             "start": limit * (page - 1),
+            "sort": "state asc, metadata_modified desc",
         }
 
         data_dict = {"id": id, "user_obj": tk.c.userobj, "include_num_followers": True}
