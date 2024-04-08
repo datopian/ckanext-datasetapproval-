@@ -47,13 +47,13 @@ def publishing_check(context, data_dict):
 
     # if sysadmin is updating the dataset and it's already in review state
     # then it should remain in review state
-    if data_dict.get("id"):
+    _action_review = context.get("_action_review", False)
+    if not _action_review and data_dict.get("id"):
         old_data_dict = tk.get_action("package_show")(
             context, {"id": data_dict.get("id")}
         )
         if (is_user_admin or is_sysadmin) and old_data_dict.get("state") == "inreview":
             data_dict["state"] = old_data_dict.get("state")
-
     return data_dict
 
 def _add_or_update_org(context, package_dict):
@@ -197,7 +197,7 @@ def dataset_review(context, data_dict):
         tk.get_action("package_patch")(
             {
                 **context,
-                "allow_publish": True,
+                "_action_review": True,
             },
             {"id": id, "state": states[action]},
         )
