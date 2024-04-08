@@ -2,9 +2,7 @@
 
 {% block content_primary_nav %}
   {{ h.build_nav_icon('user.read', _('Datasets'), id=user.name, icon='sitemap') }}
-  {% if user.sysadmin == True %}
-    {{ h.build_nav_icon('approval.dataset_review', _('Review Requested'), id=user.name, icon='check') }}
-  {% endif %}
+  {{ h.build_nav_icon('approval.review', _('Dataset review'), id=user.name, icon='check') }}
   {% if h.check_access('api_token_list', {'user': user['name']}) %}
     {{ h.build_nav_icon('user.api_tokens', _('API Tokens'), id=user.name, icon='key') }}
   {% endif %}

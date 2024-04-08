@@ -1,14 +1,16 @@
 {% ckan_extends %}
 
 {% block heading_meta %}
-    {% if package.get('publishing_status', '').startswith('draft') %}
-        <span class="label label-info">{{ _('Draft') }}</span>
-    {% elif package.get('publishing_status', '').startswith('in_review') and in_review %}
-        <span class="label label-warning">{{ _('Review requested')  }}</span>
-    {% elif package.get('publishing_status', '').startswith('in_review') %}
-        <span class="label label-warning">{{ _('Review Pending')  }}</span>
-    {% elif package.get('publishing_status', '').startswith('rejected') %}
-    <span class="label label-danger">{{ _('Rejected')  }}</span>
+    {% if package.get('state', '').startswith('draft') %}
+        <span class="badge bg-info">{{ _('Draft') }}</span>
+    {% elif package.get('state', '').startswith('deleted') %}
+        <span class="badge bg-danger">{{ _('Deleted') }}</span>
+    {% elif package.get('state', '') == 'inreview' and  h.is_dataset_owner(package, c.userobj.id) %}
+        <span class="badge bg-warning">{{ _('In review') }}</span>
+    {% elif package.get('state', '') in ['inreview', 'pending'] %}
+        <span class="badge bg-warning">{{ _('Pending') }}</span>
+    {% elif package.get('state', '') == 'rejected' %}
+        <span class="badge bg-danger">{{ _('Rejected') }}</span>
     {% elif package.get('state', '').startswith('deleted') %}
         <span class="label label-danger">{{ _('Deleted') }}</span>
     {% endif %}

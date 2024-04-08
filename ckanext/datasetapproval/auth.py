@@ -1,29 +1,22 @@
-
 import logging
-from ckan.logic.auth import get_package_object
 from ckan.plugins import toolkit as tk
+import ckan.authz as authz
 
 log = logging.getLogger(__name__)
 
-@tk.auth_allow_anonymous_access
-def package_show_with_approval(context, data_dict):
-    user = context.get('user')
-    package = get_package_object(context, data_dict)
 
-    if package.extras.get('publishing_status') in ['in_review', 'draft', 'rejected']:
-        # Accessiable to within editors so that they can collabrate on the dataset
-
-        try:
-            tk.check_access('package_update', context, data_dict)
-        except tk.ObjectNotFound:
-            return {
-                'success': False,
-                'msg': tk._('Dataset not found')
-                }
-        except tk.NotAuthorized:
-            return {
-                'success': False,
-                'msg': tk._('User %s not authorized to read package %s') % (user, package.id)
-            }
-    
-    return {'success': True}
+def dataset_review(context, data_dict):
+    dataset_dict = tk.get_action("package_show")(
+       context, {"id": data_dict.get("dataset_id")}
+    )
+    owner_org = dataset_dict.get("owner_org")
+    user_id = tk.current_user.id if tk.current_user else None
+    capacity = authz.users_role_for_group_or_org(owner_org, user_id)
+    is_org_admin = capacity == "admin"
+    if is_org_admin or tk.current_user.sysadmin:
+        return {"success": True}
+    else:
+        return {
+            "success": False,
+            "msg": "User does not have permission to review dataset",
+        }
