@@ -55,11 +55,7 @@ class DatasetReviewView(MethodView):
 
         pager_url = partial(_pager_url, params_nopage, "dataset")
 
-        if tk.c.userobj.sysadmin:
-            fq = "+state:(inreview OR pending OR rejected)"
-        # TODO: Include organization datasets if user is an admin of the organization
-        else:
-            fq = f"+state:(inreview OR pending OR rejected) +creator_user_id:{user_id}"
+        fq = "+state:(inreview OR pending OR rejected)"
 
         search_dict = {
             "fq": fq,
