@@ -15,9 +15,14 @@ def is_unowned_dataset(owner_org):
     )
 
 
-def is_user_is_editor(org_id, user_id):
+def is_user_editor_of_org(org_id, user_id):
     capacity = authz.users_role_for_group_or_org(org_id, user_id)
     return capacity == "editor"
+
+
+def is_user_admin_of_org(org_id, user_id):
+    capacity = authz.users_role_for_group_or_org(org_id, user_id)
+    return capacity == "admin"
 
 
 def publishing_check(context, data_dict):
@@ -28,9 +33,24 @@ def publishing_check(context, data_dict):
     )
     org_id = data_dict.get("owner_org")
     is_active = data_dict.get("state") in ["active", "publish", None, False]
-    if (is_user_is_editor(org_id, user_id) or is_unowned_dataset(org_id)) and is_active:
+
+    is_user_editor = is_user_editor_of_org(org_id, user_id)
+    is_user_admin = is_user_admin_of_org(org_id, user_id)
+    is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
+
+    if (is_user_editor or is_unowned_dataset(org_id)) and is_active:
         mailer.mail_package_review_request_to_admins(context, data_dict)
         data_dict["state"] = "inreview"
+
+    # if sysadmin is updating the dataset and it's already in review state
+    # then it should remain in review state
+    if data_dict.get("id"):
+        old_data_dict = tk.get_action("package_show")(
+            context, {"id": data_dict.get("id")}
+        )
+        if (is_user_admin or is_sysadmin) and old_data_dict.get("state") == "inreview":
+            data_dict["state"] = old_data_dict.get("state")
+
     return data_dict
 
 
