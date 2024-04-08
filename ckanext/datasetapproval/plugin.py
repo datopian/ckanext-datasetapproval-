@@ -53,6 +53,7 @@ class DatasetapprovalPlugin(
     def get_auth_functions(self):
         return {
             "dataset_review": auth.dataset_review,
+            "package_update": auth.package_update,
         }
 
     def get_dataset_labels(self, dataset_obj):
@@ -67,7 +68,5 @@ class DatasetapprovalPlugin(
         if dataset_obj.creator_user_id != user_id and dataset_obj.state not in [
             "active"
         ] and not is_org_admin:
-            # TODO: Admin should be able to see/edit In Review datasets
             return []
-            
         return labels

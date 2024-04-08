@@ -21,7 +21,11 @@ def is_user_is_editor(org_id, user_id):
 
 
 def publishing_check(context, data_dict):
-    user_id = tk.current_user.id if tk.current_user else None
+    user_id = (
+        tk.current_user.id
+        if tk.current_user and not tk.current_user.is_anonymous
+        else None
+    )
     org_id = data_dict.get("owner_org")
     is_active = data_dict.get("state") in ["active", "publish", None, False]
     if (is_user_is_editor(org_id, user_id) or is_unowned_dataset(org_id)) and is_active:
