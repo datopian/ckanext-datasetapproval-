@@ -1,263 +1,324 @@
 .dataset-status-label {
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: row;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
 }
 
-/* Main CSS */
-
+/* Main Section */
 .main {
-    background-color: #fff;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
+  background-color: #fff;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 .row {
-    background-image: none;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    border: none;
-    border-radius: 0px;
-    border-color: #fff;
-    outline: none;
-    box-shadow: none;
+  background-image: none;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border: none;
+  border-radius: 0px;
+  border-color: #fff;
+  outline: none;
+  box-shadow: none;
 }
 
 .primary .col-md-9 .col-xs-12 {
-    margin: 0 auto;
-     /* Makes it take up full width of the parrent container*/
-    width: 100%;
-    min-width: 1056px;
-    justify-content: center;
-    align-content: center;
-    display: flex;
+  margin: 0 auto;
+  width: 100%;
+  min-width: 1056px;
+  justify-content: center;
+  align-content: center;
+  display: flex;
 }
 
 .primary .col-md-9 .col-xs-12 > .module {
-    margin: 0 auto;
-    min-width: 1056px;
-    width: 133%;
+  margin: 0 auto;
+  min-width: 1056px;
+  width: 133%;
 }
 
-/* Package create/edit CSS */
 
-/* Package create/edit section */
+/* Package Create/Edit Section */
 .package-create {
-    padding: 40px;
-    border-width: 3px;
-    border-color: #006D84; 
-    border-style: solid;
-    border-radius: 10px;
+  padding: 40px;
+  border-width: 3px;
+  border-color: #006D84; 
+  border-style: solid;
+  border-radius: 10px;
 }
 
 
-/* Stages CSS */
+/* Stages Section */
 
 .stages {
-  display: flex;
-  flex-direction: row; /* This is more consistent with flexbox than 'flex: row;' */
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 1.5rem;
-  color: #aeaeae;
-  counter-reset: stage;
-  overflow: hidden;
-  gap: 20px;
+display: flex;
+flex-direction: row; /* This is more consistent with flexbox than 'flex: row;' */
+list-style: none;
+margin: 0;
+padding: 0;
+margin-bottom: 1.5rem;
+color: #aeaeae;
+counter-reset: stage;
+overflow: hidden;
+gap: 20px;
 }
 
-  .stages::after {
-    display: block;
-    clear: both;
-    content: none;
-  }
-  
-  .stages li {
-    /* Removed 'float: left;' because it's unnecessary with flexbox */
-    line-height: 27px;
-    counter-increment: stage;
-    background-color: #fff;
-    padding: 10px 10px;
-    position: relative;
-    flex-grow: 1;
-    width: auto;
-    z-index: 1; /* Set z-index to 1 to ensure it's above the spacer */
-  }
+.stages::after {
+  display: block;
+  clear: both;
+  content: none;
+}
 
-  .stages li::before {
-    right: -34px;
-    content: "";
-    position: absolute;
-    border: 29px solid #fff;
-    top: 0;
-    z-index: 2;
-    display: block;
-    border-radius: 0;
-    top: 50%;
-    margin-top: -29px;
-    margin-right: 0px;
-    border-left-color: #D9D9D9;
-  }
-  .stages li:last-child::before {
-    content: none;
-  }
-  .stages li::after {
-    left: 0;
-    border-style: solid rgba(237, 237, 237, 0);
-    border-color: #fff;
-    border-width: 50px;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-top-color: #EDEDED;
-    border-bottom-color: #EDEDED;
-    border-left-color: #fff;
-    border-width: 29px;
-    top: 50%;
-    margin-top: -29px;
-    margin-left: -30px;
-    z-index: 2;
-  }
-
-  .stages li.spacer {
-  flex-basis: 10%; /* Adjusted for flexbox layout */
-  padding: 0;
+.stages li {
+  /* Removed 'float: left;' because it's unnecessary with flexbox */
+  line-height: 27px;
+  counter-increment: stage;
+  background-color: #fff;
+  padding: 10px 10px;
   position: relative;
-  z-index: 0; /* Lower z-index so it goes under the previous li */
+  flex-grow: 1;
+  width: auto;
+  z-index: 1; /* Set z-index to 1 to ensure it's above the spacer */
 }
 
-  .stages li.spacer::after {
-    left: 0;
-    border-style: solid rgba(237, 237, 237, 0);
-    border-color: #fff;
-    border-width: 50px;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-top-color: #000;
-    border-bottom-color: #000;
-    border-left-color: #fff;
-    border-width: 29px;
-    top: 50%;
-    margin-top: -29px;
-    margin-left: 20px;
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%; /* Center the spacer's ::after pseudo-element */
-    width: 100%; /* Full width of the spacer element */
-    height: 100%; /* Full height of the spacer element */
-    background-color: #fff; /* This should be the background color of your container */
-    z-index: -1; /* Lower z-index to ensure it goes under the previous li */
-  }
-  
-  .stages li.last {
-    position: relative;
-    right: -1px;
-  }
-  
-  .stages li.last,
-  .stages li.last .highlight {
-    border-radius: 0 3px 0 0;
-  }
-  
-  .stages li.first:after {
-    content: none;
-    border: none;
-  }
-  
-  .stages li.active:after {
-    border-top-color: #006D84;
-    border-bottom-color: #006D84;
-    border-right-color: #006D84;
-    margin-right: 5px;
-    z-index: 2;
-  }
-  
-  .stages li.complete:after {
-    border-right-color: #D9D9D9;
-    border-top-color: #D9D9D9;
-    border-bottom-color: #D9D9D9;
-  }
-  
-  .stages.stage-3 li.complete:first-child:after {
-    content: none;
-  }
-  
-  .stages li.active,
-  .stages li.complete {
-    background: none;
-  }
+.stages li::before {
+  right: -34px;
+  content: "";
+  position: absolute;
+  border: 29px solid #fff;
+  top: 0;
+  z-index: 2;
+  display: block;
+  border-radius: 0;
+  top: 50%;
+  margin-top: -29px;
+  margin-right: 0px;
+  border-left-color: #D9D9D9;
+}
+.stages li:last-child::before {
+  content: none;
+}
+.stages li::after {
+  left: 0;
+  border-style: solid rgba(237, 237, 237, 0);
+  border-color: #fff;
+  border-width: 50px;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-top-color: #EDEDED;
+  border-bottom-color: #EDEDED;
+  border-left-color: #fff;
+  border-width: 29px;
+  top: 50%;
+  margin-top: -29px;
+  margin-left: -30px;
+  z-index: 2;
+}
 
-  .stages li.active::before {
-    border-left-color: #006D84;
-  }
+.stages li.spacer {
+flex-basis: 10%; /* Adjusted for flexbox layout */
+padding: 0;
+position: relative;
+z-index: 0; /* Lower z-index so it goes under the previous li */
+}
 
-  .stages li.complete {
-    background: #D9D9D9;
-  }
+.stages li.spacer::after {
+  left: 0;
+  border-style: solid rgba(237, 237, 237, 0);
+  border-color: #fff;
+  border-width: 50px;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-top-color: #000;
+  border-bottom-color: #000;
+  border-left-color: #fff;
+  border-width: 29px;
+  top: 50%;
+  margin-top: -29px;
+  margin-left: 20px;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%; /* Center the spacer's ::after pseudo-element */
+  width: 100%; /* Full width of the spacer element */
+  height: 100%; /* Full height of the spacer element */
+  background-color: #fff; /* This should be the background color of your container */
+  z-index: -1; /* Lower z-index to ensure it goes under the previous li */
+}
 
-  .stages li.active {
-    background: #006D84;
-  }
-  
-  .stages li .highlight {
-    display: block;
-    position: static;
-    height: 100%;
-    padding: 0px;
-    border: none;
-    text-align: left;
-    text-decoration: none;
-    line-height: normal;
-    z-index: 10;
-    width: fit-content;
-  }
+.stages li.last {
+  position: relative;
+  right: -1px;
+}
 
-  .stages li .highlight::before{
-    border-radius: 99999px;
-    content: counter(stage);
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    color: #6D6D6D;
-    background-color: #fff;
-    z-index: 3;
-    display: inline-block;
-    position: relative;
-    margin-right: 4px;
-    vertical-align: middle;
-    line-height: 1.15em;
-    font-size: 25px;
-    font-weight: bold;
-    box-sizing: content-box;
-  }
+.stages li.last,
+.stages li.last .highlight {
+  border-radius: 0 3px 0 0;
+}
 
-  .stages li.active .highlight::before{
-    color: #006D84;
-  }
-  
-  .stages li.active .highlight {
-    color: #fff;
-    background: #006D84;
-  }
-  
-  .stages li.complete .highlight {
-    color: #262626;
-    background: #D9D9D9;
-  }
+.stages li.first:after {
+  content: none;
+  border: none;
+}
+
+.stages li.active:after {
+  border-top-color: #006D84;
+  border-bottom-color: #006D84;
+  border-right-color: #006D84;
+  margin-right: 5px;
+  z-index: 2;
+}
+
+.stages li.complete:after {
+  border-right-color: #D9D9D9;
+  border-top-color: #D9D9D9;
+  border-bottom-color: #D9D9D9;
+}
+
+.stages.stage-3 li.complete:first-child:after {
+  content: none;
+}
+
+.stages li.active,
+.stages li.complete {
+  background: none;
+}
+
+.stages li.active::before {
+  border-left-color: #006D84;
+}
+
+.stages li.complete {
+  background: #D9D9D9;
+}
+
+.stages li.active {
+  background: #006D84;
+}
+
+.stages li .highlight {
+  display: block;
+  position: static;
+  height: 100%;
+  padding: 0px;
+  border: none;
+  text-align: left;
+  text-decoration: none;
+  line-height: normal;
+  z-index: 10;
+  width: fit-content;
+}
+
+.stages li .highlight::before{
+  border-radius: 99999px;
+  content: counter(stage);
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  color: #6D6D6D;
+  background-color: #fff;
+  z-index: 3;
+  display: inline-block;
+  position: relative;
+  margin-right: 4px;
+  vertical-align: middle;
+  line-height: 1.15em;
+  font-size: 25px;
+  font-weight: bold;
+  box-sizing: content-box;
+}
+
+.stages li.active .highlight::before{
+  color: #006D84;
+}
+
+.stages li.active .highlight {
+  color: #fff;
+  background: #006D84;
+}
+
+.stages li.complete .highlight {
+  color: #262626;
+  background: #D9D9D9;
+}
 
 /* Terms and conditions CSS */
+.terms-and-conditions-page {
+padding: 40px;
+border-width: 3px;
+border-color: #006D84; 
+border-style: solid;
+border-radius: 10px;
+}
+
+.terms-and-conditions-content h2 {
+font-size: 20px;
+margin-bottom: 20px;
+}
+
+.terms-and-conditions-content p {
+font-size: 16px;
+font-weight: 700;
+line-height: 24px;
+letter-spacing: 0em;
+text-align: left;
+font-family: Calibri;
+font-size: 16px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0em;
+text-align: left;
+}
+
+
+.form-group {
+display: block;
+position: relative;
+padding-left: 35px;
+margin-bottom: 12px;
+cursor: pointer;
+font-size: 18px;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+.checkbox label input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+font-family: Calibri;
+font-size: 12px;
+font-weight: 100;
+line-height: 20px;
+letter-spacing: 0em;
+text-align: left;
+}
+
+/* Package Create/Edit Section */
+.package-create {
+  padding: 40px;
+  border-width: 3px;
+  border-color: #006D84; 
+  border-style: solid;
+  border-radius: 10px;
+}
+
+
+/* Terms and Conditions Section */
 .terms-and-conditions-page {
   padding: 40px;
   border-width: 3px;
@@ -285,51 +346,8 @@
   text-align: left;
 }
 
-
-.form-group {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.checkbox label input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  font-family: Calibri;
-  font-size: 12px;
-  font-weight: 100;
-  line-height: 20px;
-  letter-spacing: 0em;
-  text-align: left;
-}
-
-.terms-and-conditions-page .form-actions {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-}
-
-.terms-and-conditions-page .form-actions .btn {
-  margin-right: 10px;
-
-}
-
-/* Resource create/edit CSS */
-/* Resource form buttons */
-
+/* Resource Create/Edit Section */
 .resource-form-buttons {
-  /* there are four buttons in the resource form */
-  /* the first button should be aligned left and other buttons should be aligned rigght*/
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -349,4 +367,3 @@
   flex-direction: row;
   justify-content: right;
   margin-top: 20px;
-}

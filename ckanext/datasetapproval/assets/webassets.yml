@@ -1,13 +1,3 @@
-datasetapproval_js:
-  filter: rjsmin
-  output: ckanext-datasetapproval/%(version)s-form-save.js
-  contents:
-    - js/dataset-visibility.js
-    - js/form-submit.js
-  extra:
-    preload:
-      - base/main
-
 datasetapproval_css:
   filter: cssrewrite
   output: ckanext-datasetapproval/%(version)s-approval.css

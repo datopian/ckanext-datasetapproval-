@@ -1,15 +1,21 @@
 {% ckan_extends %}
+{% set _action =  'resource.edit' if form_action else  'resource.new' %}
+
+{% block stages %}
+  {{ h.snippet('package/snippets/stages.html', stages=_action, pkg_name=pkg_name, dataset_type=dataset_type) }}
+{% endblock %}
+
 
 {% block previous_button %}
 <button class="btn btn-default" name="save" value="go-dataset" type="submit">{{ _('Previous: Add metadata') }}</button>
 {% endblock %}
 
 {% block save_button %}
-<button class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{ _('Next: Send to Review') }}{% endblock %}</button>
+<button class="btn btn-primary" name="save" value="go-review"  type="submit">{% block save_button_text %}{{ _('Next: Send to Review') }}{% endblock %}</button>
 <button class="btn btn-primary" name="save" value="save-draft" type="submit">{{ _('Save as Draft') }}</button>
 {% endblock %}
 
 {% block add_button %}
-<button class="btn btn-primary" name="save" value="go-dataset-complete" type="submit">{{ _('Add') }}</button>
+<button class="btn btn-primary" name="save" value="go-review" type="submit">{{ _('Next: Send to Review') }}</button>
 <button class="btn btn-primary" name="save" value="save-draft" type="submit">{{ _('Save as Draft') }}</button>
 {% endblock %}

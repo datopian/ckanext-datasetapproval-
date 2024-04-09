@@ -4,6 +4,7 @@ import logging
 from flask import Blueprint
 from ckan.common import current_user
 from ckan.plugins import toolkit as tk
+import ckan.model as model
 from ckan.views.dataset import (
     CreateView as BaseCreateView,
     EditView as BaseEditView,
@@ -30,6 +31,15 @@ dataset = Blueprint(
 class CreateView(BaseCreateView):
     def __init__(self):
         super().__init__()
+
+    def get(self, package_type, data=None, errors=None, error_summary=None):
+        if data and data.get("agree") == "on":
+            data["terms_agreed"] = True
+            return super().get(package_type, data, {}, {})
+
+        if error_summary:
+            return super().get(package_type, data, errors, error_summary)
+        return terms_and_conditions(package_type)
 
     def post(self, package_type):
         save_draft = tk.request.form.get("save") == "save-draft"
@@ -60,6 +70,7 @@ class CreateView(BaseCreateView):
             return self.get(
                 package_type, data=data_dict, errors=errors, error_summary=error_summary
             )
+
         return super().post(package_type)
 
 
@@ -169,9 +180,8 @@ class EditView(BaseEditView):
             if save_draft:
                 tk.h.flash_success(tk._("Dataset saved as draft"))
                 return self.get(package_type, id, data=pkg_dict)
-            return _form_save_redirect(
-                pkg_dict["name"], "edit", package_type=package_type
-            )
+            else:
+                return tk.redirect_to("approval_dataset.dataset_review", id=id)
         except tk.NotAuthorized:
             return tk.abort(403, tk._("Unauthorized to read package %s") % id)
         except tk.ObjectNotFound:
@@ -182,8 +192,61 @@ class EditView(BaseEditView):
             return self.get(package_type, id, data_dict, errors, error_summary)
 
 
+def terms_and_conditions(package_type):
+    data_dict = {}
+    if tk.request.method == "POST":
+        data_dict["terms_agreed"] = True
+        if "agree" in tk.request.form:
+            return tk.redirect_to(tk.url_for("dataset.new"), {"terms_agreed": True})
+        else:
+            pass
+    return tk.render(
+        "package/snippets/terms_and_conditions.html", extra_vars={"pkg_dict": data_dict}
+    )
+
+
+def dataset_review(package_type, id):
+    # Retrieve the context for CKAN's logic functions
+    context = {
+        "model": model,
+        "session": model.Session,
+        "user": tk.c.user or tk.c.author,
+    }
+    try:
+        package_dict = tk.get_action("package_show")(context, {"id": id})
+    except tk.ObjectNotFound:
+        tk.abort(404, tk._("Dataset not found"))
+    except tk.NotAuthorized:
+        tk.abort(401, tk._("Unauthorized to read dataset"))
+
+    return tk.render(
+        "package/snippets/review.html",
+        extra_vars={"pkg_dict": package_dict, "data": package_dict},
+    )
+
+
+def dataset_publish(package_type, id):
+    context = {
+        "model": model,
+        "session": model.Session,
+        "user": tk.c.user or tk.c.author,
+    }
+    pkg_dict = tk.get_action("package_show")(context, {"id": id})
+    resources = pkg_dict.get("resources", [])
+    resources = sorted(resources, key=lambda x: x["created"], reverse=True)
+
+    if tk.request.form["save"] == "go-resource":
+        return tk.redirect_to("resource.edit", id=pkg_dict["id"], resource_id=resources[0]["id"])
+
+    tk.get_action("package_patch")(context, {"id": id, "state": "active"})
+    return tk.redirect_to("{}.read".format("dataset"), id=id)
+
+
 dataset.add_url_rule("/new", view_func=CreateView.as_view(str("new")))
 dataset.add_url_rule("/edit/<id>", view_func=EditView.as_view(str("edit")))
+dataset.add_url_rule("/terms/agree", view_func=terms_and_conditions)
+dataset.add_url_rule("/<id>/review", view_func=dataset_review)
+dataset.add_url_rule("/<id>/publish", view_func=dataset_publish, methods=["POST"])
 
 
 def registred_views():

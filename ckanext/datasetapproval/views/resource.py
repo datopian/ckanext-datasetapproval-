@@ -2,6 +2,7 @@
 import logging
 import cgi
 
+from ckan.types import Response
 from flask import Blueprint
 from ckan.common import current_user
 from ckan.plugins import toolkit as tk
@@ -129,13 +130,54 @@ class CreateView(BaseCreateView):
         elif save_action == "save-draft":
             tk.h.flash_success(tk._("Saved as draft."))
             return self.get(package_type, id, data)
+        elif save_action == "go-review":
+            return tk.redirect_to("approval_dataset.dataset_review", id=id)
         else:
             # add more resources
             return tk.redirect_to("{}_resource.new".format(package_type), id=id)
 
 
+class EditView(BaseEditView):
+    def __init__(self):
+        super().__init__()
+
+    def post(self, package_type, id, resource_id):
+        context = self._prepare(id)
+        data = logic.clean_dict(
+            dict_fns.unflatten(logic.tuplize_dict(logic.parse_params(tk.request.form)))
+        )
+        data.update(
+            logic.clean_dict(
+                dict_fns.unflatten(
+                    logic.tuplize_dict(logic.parse_params(tk.request.files))
+                )
+            )
+        )
+
+        # we don't want to include save as it is part of the form
+        del data["save"]
+
+        data["package_id"] = id
+        try:
+            if resource_id:
+                data["id"] = resource_id
+                tk.get_action("resource_update")(context, data)
+            else:
+                tk.get_action("resource_create")(context, data)
+        except tk.ValidationError as e:
+            errors = e.error_dict
+            error_summary = e.error_summary
+            return self.get(package_type, id, resource_id, data, errors, error_summary)
+        except tk.NotAuthorized:
+            return tk.abort(403, _(u'Unauthorized to edit this resource'))
+        return tk.redirect_to("approval_dataset.dataset_review", id=id)
+
+
 def register_dataset_plugin_rules(blueprint):
     blueprint.add_url_rule("/new", view_func=CreateView.as_view(str("new")))
+    blueprint.add_url_rule(
+        "/<resource_id>/edit", view_func=EditView.as_view(str("edit"))
+    )
 
 
 register_dataset_plugin_rules(resource)
