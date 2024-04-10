@@ -60,9 +60,42 @@ def publishing_check(context, data_dict):
     return data_dict
 
 
+def add_or_update_org(context, package_dict):
+    # Add the package to the org group
+    if "org" in package_dict and len(package_dict["org"]) > 0:
+        old_package_dict = tk.get_action("package_show")(
+                context, {"id": package_dict.get("id")}
+        )
+
+        package_groups = [{"name": package_dict["org"]}]
+        if old_package_dict:
+            groups = old_package_dict.get("groups", [])
+            log.error(groups)
+
+            orgs_names = []
+            non_orgs_names = []
+
+            # This will ensure only one org can be added per
+            # dataset and other non-org groups are kept as
+            # they are
+            if len(groups) > 0:
+                groups_names = list(map(lambda g: g.get("name"), groups))
+                orgs = tk.get_action("group_list")(
+                        context, {"all_fields": True, "type": "org", "groups": groups_names}
+                )
+                orgs_names = list(map(lambda g: g.get("name"), orgs))
+                non_orgs_names = list(set(groups_names) - set(orgs_names))
+                package_groups.extend([{ "name": name } for name in non_orgs_names ])
+
+        package_dict["groups"] = package_groups
+
+    return package_dict
+
+
 @tk.chained_action
 def package_create(up_func, context, data_dict):
     publishing_check(context, data_dict)
+    data_dict = add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
@@ -70,6 +103,7 @@ def package_create(up_func, context, data_dict):
 @tk.chained_action
 def package_update(up_func, context, data_dict):
     publishing_check(context, data_dict)
+    data_dict = add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
@@ -77,6 +111,7 @@ def package_update(up_func, context, data_dict):
 @tk.chained_action
 def package_patch(up_func, context, data_dict):
     publishing_check(context, data_dict)
+    data_dict = add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
