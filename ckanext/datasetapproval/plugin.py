@@ -34,6 +34,7 @@ class DatasetapprovalPlugin(
         return {
             "package_create": actions.package_create,
             "package_update": actions.package_update,
+            "package_patch": actions.package_patch,
             "dataset_review": actions.dataset_review,
         }
 

@@ -1,0 +1,47 @@
+{% extends "package/edit_base.html" %}
+
+{% block title %}Terms and Conditions{% endblock %}
+
+{% block subtitle %}Please read and agree to the terms and conditions before proceeding.{% endblock %}
+
+{% block content_action %}{% endblock %}
+
+{% block content_primary_nav %}{% endblock %}
+
+{% block secondary %}{% endblock %}
+
+
+{% block primary_content %}
+  <section class="module">
+    {% block page_header %}{% endblock %}
+    <div class="module-content">
+      {% block primary_content_inner %}{% endblock %}
+
+        {% block stages %}
+            {{ h.snippet('package/snippets/stages.html', stages="dataset.terms", dataset_type=dataset_type) }}
+        {% endblock %}
+
+        {% block terms_and_conditions %}
+            <form class="dataset-form" method="post" action="{{ h.url_for('dataset.new') }}">
+                {{ h.csrf_input() }}
+                <div class="terms-and-conditions-page">
+                    <div class="terms-and-conditions-content">
+                        <h2>Terms and Conditions</h2>
+                        <p>The <a href="#">Terms and Conditions</a> describes the rules for storing datasets in the archive. It contains the responsibilities of dataset depositors and the responsibilities of the archive. You must agree to the terms before your dataset can be archlved.</p>
+                        <div class="form-group">
+                            <label for="terms_agree">
+                                <input type="checkbox" id="terms_agree" name="terms_agree" required>
+                                I agree to the Terms and Conditions for Deposition and Access for the NIRD archive.
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="proceed">Proceed</button>
+                            <a  class="btn btn-default" href="{{ h.url_for('dataset.search') }}">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endblock %}
+    </div>
+  </section>
+{% endblock %}
