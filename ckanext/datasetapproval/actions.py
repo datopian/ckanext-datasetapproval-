@@ -3,6 +3,7 @@ import ckan.authz as authz
 
 from ckan.plugins import toolkit as tk
 from ckanext.datasetapproval import mailer
+from ckan import logic
 
 log = logging.getLogger()
 
@@ -103,3 +104,28 @@ def dataset_review(context, data_dict):
         raise tk.ValidationError(str(e))
 
     return {"success": True}
+
+
+def _org_autocomplete(context, data_dict):
+
+    q = data_dict['q']
+    limit = data_dict.get('limit', 20)
+    model = context['model']
+
+    query = model.Group.search_by_name_or_title(q, group_type="org",
+                                                is_org=False, limit=limit)
+
+    org_list = []
+    for group in query.all():
+        result_dict = {}
+        for k in ['id', 'name', 'title']:
+            result_dict[k] = getattr(group, k)
+        org_list.append(result_dict)
+
+    return org_list
+
+
+@tk.side_effect_free
+def org_autocomplete(context, data_dict):
+    logic.check_access('group_autocomplete', context, data_dict)
+    return _org_autocomplete(context, data_dict)

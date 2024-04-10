@@ -36,6 +36,7 @@ class DatasetapprovalPlugin(
             "package_update": actions.package_update,
             "package_patch": actions.package_patch,
             "dataset_review": actions.dataset_review,
+            "org_autocomplete": actions.org_autocomplete
         }
 
     # ITemplateHelpers
