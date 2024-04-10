@@ -16,7 +16,7 @@
   {% endif %}
   {% endblock %}
 
-  {% if _action ==  "dataset.new"%}
+  {% if _action ==  "dataset.new" and "metadata_modified" not in data %}
   <a class="btn btn-default" href="{% url_for('approval_dataset.new') %}">{% block previous_button_text %}{{ _('Previous: Terms and conditions') }}{% endblock %}</a>
   {% endif %}
 
