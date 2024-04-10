@@ -1,27 +1,29 @@
 {% ckan_extends %}
+{% set _action =  "dataset.edit" if form_style == "edit" else "dataset.new" %}
 
-{% block basic_fields %}
-    {{ super() }}
-
-    {% set publishing_status = data.get('publishing_status', 'draft')  %}
-    <input id="field-publishing_status" type="hidden" name="publishing_status" value="{{ publishing_status }}" />
-    {%- if 'resource_fields' not in schema -%}
-    <!-- force controller to skip resource-editing step for this type -->
-    <input type="hidden" name="_ckan_phase" value="" />
-    {%- endif -%}
+{% block stages %}
+  {{ h.snippet('package/snippets/stages.html', stages=_action, dataset_type=dataset_type) }}
 {% endblock %}
 
-{% block save_button %}
-  {% if form_style == 'new' %}
-      <a class="btn btn-primary" data-module="form-save" data-module-type="draft">{{ _('Next: Add Data')}}</a>
-      <button class="btn btn-primary hidden" type="submit" name="save"></button>
-    {% else %}
-      <a class="btn btn-warning" data-module="form-save" data-module-type="draft">{{ _('Save as Draft')}}</a>
-      <a class="btn btn-primary" data-module="form-save" data-module-type="published">
-        {% block save_button_text %}
-        {{ _('Next: Add Data') }}
-        {% endblock %}
-      </a>
-      <button class="btn btn-primary hidden" type="submit" name="save"></button>
+
+{% block form_actions %}
+<div class="form-actions">
+  {% block delete_button %}
+  {% if _action !=  "dataset.new"%}
+    {% if h.check_access('package_delete', {'id': data.id}) and not data.state == 'deleted' %}
+      <a class="btn btn-danger pull-left" href="{% url_for dataset_type ~ '.delete', id=data.id %}" data-module="confirm-action" data-module-content="{{ h.humanize_entity_type('package', dataset_type, 'delete confirmation') or _('Are you sure you want to delete this dataset?') }}">{% block delete_button_text %}{{ _('Delete') }}{% endblock %}</a>
+    {% endif %}
   {% endif %}
+  {% endblock %}
+
+  {% if _action ==  "dataset.new" and "metadata_modified" not in data %}
+  <a class="btn btn-default" href="{% url_for('approval_dataset.new') %}">{% block previous_button_text %}{{ _('Previous: Terms and conditions') }}{% endblock %}</a>
+  {% endif %}
+
+  {% block save_button %}
+<button class="btn btn-primary" type="submit" name="save">{% block save_button_text %}{{ _('Next: Upload Data') }}{% endblock %}</button>
+<button class="btn btn-primary" type="submit" name="save" value="save-draft" >{{ _('Save as Draft') }}</button>  {% endblock %}
+  {{ form.required_message() }}
+</div>
 {% endblock %}
+

@@ -1,48 +1,32 @@
-{#
-Inserts a stepped progress indicator for the new package form. Each stage can
-have one of three states, "uncomplete", "complete" and "active".
+{% macro set_class(stages, active_stages) %}
+    {% if stages in active_stages %}
+        active
+    {% else %}
+        complete
+    {% endif %}
+{% endmacro %}
 
-stages - A list of states for each of the three stages. Missing stages default
-         to "uncomplete".
-
-Example:
-
-    {% snippet 'package/snippets/stages.html', stages=['active'] %}
-    {% snippet 'package/snippets/stages.html', stages=['complete', 'active'] %}
-    {% snippet 'package/snippets/stages.html', stages=['active', 'complete'] %}
-
-#}
-{% set s1 = stages[0] or 'active' %}
-{% set s2 = stages[1] or 'uncomplete' %}
-{% if s1 != 'uncomplete' %}{% set class = 'stage-1' %}{% endif %}
-{% if s2 != 'uncomplete' %}{% set class = 'stage-2' %}{% endif %}
+{% macro set_label(stages, default_label, edit_label) %}
+    {% if 'edit' in stages %}
+        {{ _(edit_label) }}
+    {% else %}
+        {{ _(default_label) }}
+    {% endif %}
+{% endmacro %}
 
 <ol class="stages {{ class }}">
-  <li class="first {{ s1 }}">
-    {% if s1 != 'complete' %}
-      {% if h.is_admin(c.user) %}
-        <span class="highlight">{{ _('Create dataset') }}</span>
-      {% else %}
-        <span class="highlight">{{ _('Request dataset') }}</span>
-      {% endif %}
-    {% else %}
-      {% if h.is_admin(c.user) %}
-        <button class="highlight" name="save" value="go-dataset" type="submit">{{ _('Create dataset') }}</button>
-      {% else %}
-        <button class="highlight" name="save" value="go-dataset" type="submit">{{ _('Request dataset') }}</button>
-      {% endif %}
+    {% if stages != "dataset.edit" %}
+    <li class="{{ set_class(stages, ['dataset.terms']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Terms and conditions', 'Terms and conditions') }}</span>
+    </li>
     {% endif %}
-  </li>
-  <li class="last {{ s2 }}">
-    {% if s2 != 'complete' %}
-      <span class="highlight">{{ _('Add data') }}</span>
-    {% else %}
-      {% if s1 == 'active' %}
-        {# stage 1 #}
-        <button class="highlight" name="save" value="go-resources" type="submit">{{ _('Add data') }}</button>
-      {% else %}
-        {% link_for _('Add data'), named_route='dataset.new', class_="highlight" %}
-      {% endif %}
-    {% endif %}
-  </li>
+    <li class="{{ set_class(stages, ['dataset.new', 'dataset.edit']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Add metadata', 'Update metadata') }}</span>
+    </li>
+    <li class="{{ set_class(stages, ['resource.new', 'resource.edit']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Upload data', 'Update data') }}</span>
+    </li>
+    <li class="{{ set_class(stages, ['dataset.review']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Send to review', 'Send to review') }}</span>
+    </li>
 </ol>

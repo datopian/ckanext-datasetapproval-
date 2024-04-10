@@ -9,70 +9,315 @@ dataset_fields:
 - field_name: title
   label: Title
   preset: title
-  form_placeholder: eg. A descriptive title
+  validators: not_empty unicode_safe
 
 - field_name: name
   label: URL
   preset: dataset_slug
   form_placeholder: eg. my-dataset
 
+- field_name: owner_org
+  label: Organization
+  preset: dataset_organization
+
+- field_name: tag_string
+  label: Keywords
+  preset: tag_string_autocomplete
+  form_placeholder: eg. economy, mental health, government
+
+- field_name: theme
+  label: Theme
+  preset: multiple_select
+  form_snippet: multiple_select.html
+  display_snippet: multiple_text.html
+  validators: not_empty unicode_safe
+  choices:
+  - value: addresses
+    label: Addresses
+  - value: administrative_units
+    label: Administrative units
+  - value: agricultural_and_aquaculture_facilities
+    label: Agricultural and aquaculture facilities
+  - value: area_management_restriction_regulation_zones_and_reporting_units
+    label: Area management/restriction/regulation zones and reporting units
+  - value: atmospheric_conditions
+    label: Atmospheric conditions
+  - value: bio_geographical_regions
+    label: Bio-geographical regions
+  - value: buildings
+    label: Buildings
+  - value: cadastral_parcels
+    label: Cadastral parcels
+  - value: coordinate_reference_systems
+    label: Coordinate reference systems
+  - value: elevation
+    label: Elevation
+  - value: energy_resources
+    label: Energy resources
+  - value: environmental_monitoring_facilities
+    label: Environmental monitoring facilities
+  - value: geographical_grid_systems
+    label: Geographical grid systems
+  - value: geographical_names
+    label: Geographical names
+  - value: geology
+    label: Geology
+  - value: habitats_and_biotopes
+    label: Habitats and biotopes
+  - value: human_health_and_safety
+    label: Human health and safety
+  - value: hydrography
+    label: Hydrography
+  - value: land_cover
+    label: Land cover
+  - value: land_use
+    label: Land use
+  - value: meteorological_geographical_features
+    label: Meteorological geographical features
+  - value: mineral_resources
+    label: Mineral resources
+  - value: natural_risk_zones
+    label: Natural risk zones
+  - value: oceanographic_geographical_features
+    label: Oceanographic geographical features
+  - value: orthoimagery
+    label: Orthoimagery
+  - value: population_distribution_demography
+    label: Population distribution — demography
+  - value: production_and_industrial_facilities
+    label: Production and industrial facilities
+  - value: protected_sites
+    label: Protected sites
+  - value: sea_regions
+    label: Sea regions
+  - value: soil
+    label: Soil
+  - value: species_distribution
+    label: Species distribution
+  - value: statistical_units
+    label: Statistical units
+  - value: transport_networks
+    label: Transport networks
+  - value: utility_and_governmental_services
+    label: Utility and governmental services
+
+
+- field_name: subject
+  label: Subject
+  preset: multiple_select
+  form_placeholder: The iso topic category, eg. https://inspire.ec.europa.eu/metadata-codelist/TopicCategory
+  validators: not_empty unicode_safe
+  choices:
+  - value: farming
+    label: farming
+  - value: biota
+    label: biota
+  - value: boundaries
+    label: boundaries
+  - value: climatologymeteorologyatmosphere
+    label: climatologyMeteorologyAtmosphere
+  - value: economy
+    label: economy
+  - value: elevation
+    label: elevation
+  - value: environment
+    label: environment
+  - value: geoscientificinformation
+    label: geoscientificInformation
+  - value: health
+    label: health
+  - value: imagerybasemapsearthcover
+    label: imageryBaseMapsEarthCover
+  - value: intelligencemilitary
+    label: intelligenceMilitary
+  - value: inlandwaters
+    label: inlandWaters
+  - value: location
+    label: location
+  - value: oceans
+    label: oceans
+  - value: planningcadastre
+    label: planningCadastre
+  - value: society
+    label: society
+  - value: structure
+    label: structure
+  - value: transportation
+    label: transportation
+  - value: utilitiescommunication
+    label: utilitiesCommunication
+
 - field_name: notes
   label: Description
   form_snippet: markdown.html
   form_placeholder: eg. Some useful notes about the data
+  validators: not_empty unicode_safe
 
-- field_name: tag_string
-  label: Tags
-  preset: tag_string_autocomplete
-  form_placeholder: eg. economy, mental health, government
+- field_name: version
+  label: Version
+  form_placeholder: '1.0'
+  form_snippet: null
+  display_snippet: text.html
+
+- field_name: has_part
+  label: Has part
+  preset: multiple_text
+  validators: ignore_missing unicode_safe
+  form_snippet: multiple_text.html
+  display_snippet: multiple_text.html
+
+- field_name: is_part_of
+  label: Is part of
+  preset: multiple_text
+  validators: ignore_missing unicode_safe
+  form_snippet: multiple_text.html
+  display_snippet: multiple_text.html
+
+- field_name: releaseDate
+  label: Release date
+  preset: date
+  required: true
+  validators: not_empty 
+  form_placeholder: eg. 2024-01-15
+
+# - filed_name: has_version
+#   label: Has Version
+#   form_snippet: null
+#   display_snippet: text.html
+
+# - field_name: is_version_of
+#   label: Is version of
+#   form_snippet: null
+#   display_snippet: text.html
+
+
+- field_name: language
+  label: Language
+  validators: not_empty
+  preset: select
+  choices:
+  - value: en
+    label: English
+  - value: nor
+    label: Norwegian
+
+- field_name: conforms_to
+  label: Conforms to
+  form_snippet: text.html
+
+- field_name: provenance
+  label: Provenance
+  preset: json_object
+
+- field_name: source
+  label: Source
+  form_placeholder: http://example.com/dataset.json
+  display_property: foaf:homepage
+  display_snippet: link.html
+
+- field_name: spatial
+  label: Spatial
+  preset: json_object
+
+- field_name: dataset_status
+  label: Status
+  preset: select
+  choices:
+  - value: complete
+    label: COMPLETE
+  - value: in_work
+    label: IN WORK
+  - value: planned
+    label: PLANNED
+
+- field_name: is_referenced_by
+  label: Is referenced by
+  preset: select
+  choices:
+  - value: algorithm_documentation
+    label: ALGORITHM DOCUMENTATION
+  - value: algorithm_theoretical_basis_document_atbd_
+    label: ALGORITHM THEORETICAL BASIS DOCUMENT (ATBD)
+  - value: anomalies
+    label: ANOMALIES
+  - value: case_study
+    label: CASE STUDY
+  - value: data_citation_policy
+    label: DATA CITATION POLICY
+  - value: data_product_specification
+    label: DATA PRODUCT SPECIFICATION
+  - value: data_quality
+    label: DATA QUALITY
+  - value: data_recipe
+    label: DATA RECIPE
+  - value: deliverables_checklist
+    label: DELIVERABLES CHECKLIST
+  - value: general_documentation
+    label: GENERAL DOCUMENTATION
+  - value: how_to
+    label: HOW-TO
+  - value: important_notice
+    label: IMPORTANT NOTICE
+  - value: instrument_sensor_calibration_documentation
+    label: INSTRUMENT/SENSOR CALIBRATION DOCUMENTATION
+  - value: micro_article
+    label: MICRO ARTICLE
+  - value: pi_documentation
+    label: PI DOCUMENTATION
+  - value: processing_history
+    label: PROCESSING HISTORY
+  - value: product_history
+    label: PRODUCT HISTORY
+  - value: product_quality_assessment
+    label: PRODUCT QUALITY ASSESSMENT
+  - value: product_usage
+    label: PRODUCT USAGE
+  - value: production_history
+    label: PRODUCTION HISTORY
+  - value: publications
+    label: PUBLICATIONS
+  - value: read_me
+    label: READ-ME
+  - value: related_articles
+    label: RELATED ARTICLES
+  - value: requirements_and_design
+    label: REQUIREMENTS AND DESIGN
+  - value: science_data_product_software_documentation
+    label: SCIENCE DATA PRODUCT SOFTWARE DOCUMENTATION
+  - value: science_data_product_validation
+    label: SCIENCE DATA PRODUCT VALIDATION
+  - value: user_feedback_page
+    label: USER FEEDBACK PAGE
+  - value: user_s_guide
+    label: USER'S GUIDE
+
+- field_name: version_notes
+  label: Version notes
+  form_snippet: markdown.html
+  form_placeholder: eg. Some useful notes about the data
+  validators: not_empty unicode_safe
 
 - field_name: license_id
   label: License
   form_snippet: license.html
   help_text: License definitions and additional information can be found at http://opendefinition.org/
 
-- field_name: owner_org
-  label: Organization
-  preset: dataset_organization
+- field_name: release_date
+  label: Release date
+  form_snippet: null
+  display_snippet: date.html
 
-- field_name: approval_state
-  label: Approved
-  validators: state_validator
+- field_name: extent
+  label: Extent
+  display_snippet: text.html
+  form_snippet: null
 
-- field_name: url
-  label: Source
-  form_placeholder: http://example.com/dataset.json
-  display_property: foaf:homepage
-  display_snippet: link.html
 
-- field_name: version
-  label: Version
-  validators: ignore_missing unicode package_version_validator
-  form_placeholder: '1.0'
-
-- field_name: author
-  label: Author
-  form_placeholder: Joe Bloggs
-  display_property: dc:creator
-
-- field_name: author_email
-  label: Author Email
-  form_placeholder: joe@example.com
-  display_property: dc:creator
-  display_snippet: email.html
-  display_email_name_field: author
-
-- field_name: maintainer
-  label: Maintainer
-  form_placeholder: Joe Bloggs
-  display_property: dc:contributor
-
-- field_name: maintainer_email
-  label: Maintainer Email
-  form_placeholder: joe@example.com
-  display_property: dc:contributor
-  display_snippet: email.html
-  display_email_name_field: maintainer
+- field_name: terms_agreed
+  label: Terms
+  form_snippet: null
+  display_snippet: null
+  validators: ignore_missing
 
 
 resource_fields:

@@ -1,0 +1,10 @@
+{% ckan_extends %}
+
+{% set _action =  'resource.edit' if form_action else  'resource.new' %}
+
+{% block stages %}
+  {{ h.snippet('package/snippets/stages.html', stages=_action, pkg_name=pkg_name, dataset_type=dataset_type) }}
+{% endblock %}
+
+
+{% block save_button_text %}{{ _('Next: Send to review') }}{% endblock %}

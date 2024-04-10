@@ -1,59 +1,21 @@
 {% ckan_extends %}
+{% set _action =  'resource.edit' if form_action else  'resource.new' %}
 
-{% block basic_fields %}
-	{% if stage %}
-		{% if stage != 1 %}
-			{% if 'complete' in stage %} {# When new resource added on newly created dataset. #}
-				<input id="field-pkg_publishing_status" type="hidden" name="pkg_publishing_status" value="published" />
-			{% endif %}
-		{% else %}  {# When existing resource is edited. #}
-			<input id="field-pkg_publishing_status" type="hidden" name="pkg_publishing_status" value="draft" />
-		{% endif %}
-	{% else %} {# When new resource is added #}
-		<input id="field-pkg_publishing_status" type="hidden" name="pkg_publishing_status" value="draft" />
-	{% endif %}
+{% block stages %}
+  {{ h.snippet('package/snippets/stages.html', stages=_action, pkg_name=pkg_name, dataset_type=dataset_type) }}
 {% endblock %}
 
 
-{% block metadata_fields %}
-   {{ super() }}
-  <!-- Added instruction for publishing draft dataset -->
-  {% if stage %}
-    {% if stage == 1 %}
-      <div class="alert alert-warning" role="alert">You're updating this resource as a draft. Once you done with updating, you can submit the dataset for review by visiting the dataset edit page and clicking the "Finish Update" button <a href="{{ h.url_for('dataset.edit', id=pkg_name)}}"> dataset edit page.</a> </div>
-    {% endif %}
-  {% else %}
-      <div class="alert alert-warning" role="alert">You're updating this resource as a draft. Once you done with updating, you can submit the dataset for review by visiting the dataset edit page and clicking the "Finish Update" button <a href="{{ h.url_for('dataset.edit', id=pkg_name)}}"> dataset edit page.</a> </div>
-  {% endif %}
-{% endblock %}
-
-
-{% block delete_button %}
-{% if data.id %}
-  {% if h.check_access('resource_delete', {'id': data.id})  %}
-    <a class="btn btn-danger pull-left" href="{% url_for dataset_type ~ '_resource.delete', resource_id=data.id, id=pkg_name %}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this resource?') }}">{% block delete_button_text %}{{ _('Delete') }}{% endblock %}</a>
-  {% endif %}
-{% endif %}
-{% endblock %}
-{% if stage %}
 {% block previous_button %}
-  <button class="btn btn-default" name="save" value="go-dataset" type="submit">{{ _('Previous') }}</button>
+<button class="btn btn-default" name="save" value="go-dataset" type="submit">{{ _('Previous: Add metadata') }}</button>
 {% endblock %}
-{% endif %}
-{% block again_button %}
-<button class="btn btn-default" name="save" value="again" type="submit">{{ _('Save & add another') }}</button>
-{% endblock %}  
-{% if stage %}
-   {% block save_button %}
-{% if stage != 1 %}
-  {% if 'complete' in stage %}
-    <button class="btn btn-warning" name="save" type="submit"  data-module="form-save" data-module="form-save" data-module-type="resource-draft">{{ _('Finish & save as draft') }}</button>
-  {% endif %}
-{% endif %}
-  <button class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{_('Finish')}}{% endblock %}</button>
+
+{% block save_button %}
+<button class="btn btn-primary" name="save" value="go-review"  type="submit">{% block save_button_text %}{{ _('Next: Send to Review') }}{% endblock %}</button>
+<button class="btn btn-primary" name="save" value="save-draft" type="submit">{{ _('Save as Draft') }}</button>
 {% endblock %}
-{% else %}
+
 {% block add_button %}
-  <button class="btn btn-primary" name="save" value="go-dataset-complete" type="submit">{{ _('Add') }}</button>
+<button class="btn btn-primary" name="save" value="go-review" type="submit">{{ _('Next: Send to Review') }}</button>
+<button class="btn btn-primary" name="save" value="save-draft" type="submit">{{ _('Save as Draft') }}</button>
 {% endblock %}
-{% endif %}

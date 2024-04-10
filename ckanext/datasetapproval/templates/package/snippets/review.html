@@ -1,0 +1,79 @@
+{% extends "package/read_base.html" %}
+
+{% block content_action %}{% endblock %}
+
+{% block content_primary_nav %}{% endblock %}
+
+{% block secondary %}{% block secondary_content %}{% endblock %}{% endblock %}
+
+{% block primary %}
+  <div class="col-md-9">
+    {% block stages %}
+      {{ h.snippet('package/snippets/stages.html', stages="dataset.review", pkg_name=pkg_name, dataset_type=dataset_type) }}
+    {% endblock %}
+  </div>
+
+  <div class="package-create col-md-9">
+    {% block primary_content_inner %}
+      <form method="POST" action="{{ h.url_for('approval_dataset.dataset_publish', id=pkg.id ) }}">
+        {% block approval %}
+          {% block approval_heading %}
+            <h3>{{ _('Request review') }}</h3>
+          {% endblock %}
+          {% block approval_description %}
+            <p>{{ _('This is a preview of your dataset. You can either go back to step 2 and edit the dataset before sending to review, or send directly to review and ask for publication. <a href="/">How does the review process work?</a>
+              ') }}</p>
+          {% endblock %}
+        {% endblock %}
+        
+        <div class="form-actions" style="float:left">
+          <button class="btn btn-default" name="save" value="go-resource" type="submit"">{{ _('Previous: Upload data') }}</button>
+          <button class="btn btn-primary" name="save" value="go-metadata" type="submit">{{_('Send to review')}}</button>
+          <input type="hidden" name="dataset_name" value="{{ pkg.name }}">
+        </div>
+      </form>
+
+        {% block package_description %}
+        <h1 style="clear: both;">
+          {% block page_heading %}
+          {{ h.dataset_display_name(pkg) }}
+          {% if pkg.state.startswith('draft') %}
+          [{{ _('Draft') }}]
+          {% endif %}
+          {% if pkg.state == 'deleted' %}
+          [{{ _('Deleted') }}]
+          {% endif %}
+          {% endblock %}
+        </h1>
+        {% block package_notes %}
+        {% if pkg.notes %}
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
+        </div>
+        {% endif %}
+        {% endblock %}
+        {# FIXME why is this here? seems wrong #}
+        <span class="insert-comment-thread"></span>
+        {% endblock %}
+
+        {% block package_resources %}
+        {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
+        {% endblock %}
+
+        {% block package_tags %}
+        {% snippet "package/snippets/tags.html", tags=pkg.tags %}
+        {% endblock %}
+
+        {% block package_additional_info %}
+        {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
+        {% endblock %}
+
+        <form method="POST" action="{{ h.url_for('approval_dataset.dataset_publish', id=pkg.id ) }}">    
+          <div class="form-actions" style="float:left">
+            <button class="btn btn-default" name="save" value="go-resource" type="submit">{{ _('Previous: Upload data') }}</button>
+            <button class="btn btn-primary" name="save" value="go-metadata" type="submit">{{_('Send to review')}}</button>
+          </div>
+        </form>
+          {% endblock %}
+        </div>
+        {% endblock %}

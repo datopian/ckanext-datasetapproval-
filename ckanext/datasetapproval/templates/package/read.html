@@ -1,82 +1,22 @@
-{% extends "package/read_base.html" %}
+{% ckan_extends %}
 
-{% block primary_content_inner %}
-  {{ super() }}
-
-  {% if c.pkg_dict.publishing_status  == 'in_review' %}
+{% block package_description %}
+    {% if (c.pkg_dict.state  == "inreview") and h.check_access("dataset_review",{"dataset_id":c.pkg_dict.id }) %}
     <div class="alert alert-warning" role="alert">
-      <p>{% trans %}This dataset is waiting for an administrator approval.{% endtrans %}</p>
-      {% if h.is_admin(c.user, c.pkg_dict.owner_org) %}
-      {# TODO: remove style #}
-      <div style="margin-top: 10px">
-        <a href="/dataset-publish/{{ c.pkg_dict.id }}/approve" class="btn btn-primary">
-          {% trans %}Approve Dataset{% endtrans %}
+    <p>{% trans %}This dataset is waiting for an administrator approval.{% endtrans %}</p>
+    <div style="margin-top: 10px">
+        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='approve') }}" class="btn btn-primary">
+        {% trans %}Approve Dataset{% endtrans %}
         </a>
-        <a href="/dataset-publish/{{ c.pkg_dict.id }}/reject" class="btn btn-danger">
-          {% trans %}Reject Dataset{% endtrans %}
+        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='reject') }}"class="btn btn-danger">
+        {% trans %}Reject Dataset{% endtrans %}
         </a>
-      </div>
-      {% endif %}
-    </div>
-  {% elif c.pkg_dict.publishing_status  == 'rejected' %}
-    {% if h.is_admin(c.user, c.pkg_dict.owner_org) %}
-    <div class="alert alert-danger" role="alert">
-      <p>{% trans %}Dataset was rejected.{% endtrans %}</p>
+    </div>    
+    </div>  
+    {% elif  c.pkg_dict.state == "inreview" and h.is_dataset_owner(c.pkg_dict, c.userobj.id) %}
+    <div class="alert alert-warning" role="alert">
+        <p>{{ _("This dataset is waiting for an administrator to review.") }}</p>    
     </div>
     {% endif %}
-    {% if not h.is_admin(c.user, c.pkg_dict.owner_org)%}
-    <div class="alert alert-danger" role="alert">
-      <p>{% trans %}Dataset was rejected by administrator.{% endtrans %}</p>
-    </div>
-    {% endif %}
-  {% endif %}
-
-    {% block package_description %}
-    <div class="dataset-status-label">
-      {% if pkg.private %}
-        <span class="dataset-private label label-inverse">
-          <i class="fa fa-lock"></i>
-          {{ _('Private') }}
-        </span>
-      {% endif %}
-      {% if pkg.get('state', '').startswith('draft') %}
-      <span class="label label-info">{{ _('Draft') }}</span>
-    {% elif pkg.get('publishing_status', '').startswith('draft') %}
-      <span class="label label-info">{{ _('Draft') }}</span>
-    {% elif pkg.get('state', '').startswith('deleted') %}
-      <span class="label label-danger">{{ _('Deleted') }}</span>
-    {% endif %}
-    </div>
-      <h1>
-        {% block page_heading %}
-          {{ h.dataset_display_name(pkg) }}
-          {% if pkg.state.startswith('draft') %}
-            [{{ _('Draft') }}]
-          {% endif %}
-          {% if pkg.state == 'deleted' %}
-            [{{ _('Deleted') }}]
-          {% endif %}
-        {% endblock %}
-      </h1>
-      {% block package_notes %}
-        {% if pkg.notes %}
-          <div class="notes embedded-content">
-            {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
-          </div>
-        {% endif %}
-      {% endblock %}
-      {# FIXME why is this here? seems wrong #}
-      <span class="insert-comment-thread"></span>
-    {% endblock %}
-    {% block package_resources %}
-      {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
-    {% endblock %}
-
-    {% block package_tags %}
-      {% snippet "package/snippets/tags.html", tags=pkg.tags %}
-    {% endblock %}
-
-    {% block package_additional_info %}
-      {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
-    {% endblock %}
+    {{ super() }}
 {% endblock %}

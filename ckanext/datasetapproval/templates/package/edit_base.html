@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block breadcrumb_content_selected %}{% endblock %}
+
+{% block breadcrumb_content %}
+    {{ super() }}
+    {% if pkg %}
+	<li class="active">{% link_for _('Edit'), named_route=pkg.type ~ '.edit', id=pkg.name %}</li>
+    {% endif %}
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

@@ -1,70 +1,99 @@
 import logging
 import ckan.authz as authz
 
-from ckan.lib.mailer import MailerException
-from ckan.plugins import toolkit
-import ckan.plugins as p
-import ckan.logic as logic
-
-from ckanext.datasetapproval.mailer import mail_package_review_request_to_admins
+from ckan.plugins import toolkit as tk
+from ckanext.datasetapproval import mailer
 
 log = logging.getLogger()
 
 
-@p.toolkit.chained_action
-@logic.side_effect_free
-def package_show(up_func, context, data_dict):
-    toolkit.check_access('package_show_with_approval', context, data_dict)
-    return up_func(context, data_dict)
+def is_unowned_dataset(owner_org):
+    return (
+        not owner_org
+        and authz.check_config_permission("create_dataset_if_not_in_organization")
+        and authz.check_config_permission("create_unowned_dataset")
+    )
 
-@p.toolkit.chained_action
+
+def is_user_editor_of_org(org_id, user_id):
+    capacity = authz.users_role_for_group_or_org(org_id, user_id)
+    return capacity == "editor"
+
+
+def is_user_admin_of_org(org_id, user_id):
+    capacity = authz.users_role_for_group_or_org(org_id, user_id)
+    return capacity == "admin"
+
+
+def publishing_check(context, data_dict):
+    user_id = (
+        tk.current_user.id
+        if tk.current_user and not tk.current_user.is_anonymous
+        else None
+    )
+    org_id = data_dict.get("owner_org")
+    is_active = data_dict.get("state") in ["active", "publish", None, False]
+
+    is_user_editor = is_user_editor_of_org(org_id, user_id)
+    is_user_admin = is_user_admin_of_org(org_id, user_id)
+    is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
+
+    if (is_user_editor or is_unowned_dataset(org_id)) and is_active:
+        mailer.mail_package_review_request_to_admins(context, data_dict)
+        data_dict["state"] = "inreview"
+
+    # if sysadmin is updating the dataset and it's already in review state
+    # then it should remain in review state
+    _action_review = context.get("_action_review", False)
+    if not _action_review and data_dict.get("id"):
+        old_data_dict = tk.get_action("package_show")(
+            context, {"id": data_dict.get("id")}
+        )
+        if (is_user_admin or is_sysadmin) and old_data_dict.get("state") == "inreview":
+            data_dict["state"] = old_data_dict.get("state")
+    return data_dict
+
+
+@tk.chained_action
 def package_create(up_func, context, data_dict):
-    dataset_dict = up_func(context, data_dict)
-    # Sent email to admins to review the dataset
-    if dataset_dict.get('publishing_status') == 'in_review':
-        try:
-            mail_package_review_request_to_admins(context, dataset_dict, 'new')
-        except MailerException:
-            message = '[email] Package review request is not sent: {0}'
-            log.critical(message.format(data_dict.get('title')))
-    return dataset_dict
+    publishing_check(context, data_dict)
+    result = up_func(context, data_dict)
+    return result
 
 
-@p.toolkit.chained_action
+@tk.chained_action
 def package_update(up_func, context, data_dict):
-    dataset_dict = up_func(context, data_dict)
-    
-    # Sent email to admins to review the dataset
-    if dataset_dict.get('publishing_status') == 'in_review':
-        try:
-            mail_package_review_request_to_admins(context, dataset_dict, 'updated')
-        except MailerException:
-            message = '[email] Package review request is not sent: {0}'
-            log.critical(message.format(data_dict.get('title')))
-    return dataset_dict
-
-
-@p.toolkit.chained_action   
-def resource_create(up_func,context, data_dict):
+    publishing_check(context, data_dict)
     result = up_func(context, data_dict)
-     # little hack here, update dataset publishing status 
-    if data_dict.get('pkg_publishing_status', False):
-        toolkit.get_action('package_patch')(context, {
-            'id': data_dict.get('package_id', ''), 
-            'publishing_status': data_dict.get('pkg_publishing_status')
-            })
-        data_dict.pop('pkg_publishing_status', None)
     return result
 
 
-@p.toolkit.chained_action   
-def resource_update(up_func,context, data_dict):
+@tk.chained_action
+def package_patch(up_func, context, data_dict):
+    publishing_check(context, data_dict)
     result = up_func(context, data_dict)
-    # little hack here, update dataset publishing status 
-    if data_dict.get('pkg_publishing_status', False):
-        toolkit.get_action('package_patch')(context, {
-            'id': data_dict.get('package_id', ''), 
-            'publishing_status': data_dict.get('pkg_publishing_status')
-            })
-        data_dict.pop('pkg_publishing_status', None)
     return result
+
+
+def dataset_review(context, data_dict):
+    id = data_dict.get("dataset_id")
+    action = data_dict.get("action")
+    try:
+        tk.check_access("dataset_review", context, {"dataset_id": id})
+    except tk.NotAuthorized and tk.ObjectNotFound:
+        raise tk.NotAuthorized(tk._("User not authorized to review dataset"))
+
+    states = {"reject": "rejected", "approve": "active"}
+    mailer.mail_package_approve_reject_notification_to_editors(id, action)
+    try:
+        tk.get_action("package_patch")(
+            {
+                **context,
+                "_action_review": True,
+            },
+            {"id": id, "state": states[action]},
+        )
+    except Exception as e:
+        raise tk.ValidationError(str(e))
+
+    return {"success": True}
