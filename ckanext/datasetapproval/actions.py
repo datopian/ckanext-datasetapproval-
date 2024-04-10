@@ -98,7 +98,6 @@ def dataset_review(context, data_dict):
             },
             {"id": id, "state": states[action]},
         )
-        log.error(result)
     except Exception as e:
         log.error(e)
         raise tk.ValidationError(str(e))

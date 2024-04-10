@@ -16,10 +16,10 @@ dataset_fields:
   preset: dataset_slug
   form_placeholder: eg. my-dataset
 
-- field_name: organization 
-  label: Organization
-  form_snippet: text.html #TODO: this should be a complete with autoselect, c.f. tags
-  display_snippet: text.html
+# - field_name: organization 
+#   label: Organization
+#   form_snippet: text.html #TODO: this should be a complete with autoselect, c.f. tags
+#   display_snippet: text.html
 
 # - field_name: private 
 #   label: Visibility 
