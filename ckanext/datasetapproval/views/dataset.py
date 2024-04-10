@@ -194,8 +194,11 @@ class EditView(BaseEditView):
                 del data_dict["_ckan_phase"]
                 del data_dict["save"]
             data_dict["id"] = id
-            if save_draft:
-                data_dict["state"] = "draft"
+            
+            # If it's not saved as draft, when user clicks "next: upload data"
+            # it's going to automatically submit to review
+            data_dict["state"] = "draft"
+
             pkg_dict = tk.get_action("package_update")(context, data_dict)
             if save_draft:
                 tk.h.flash_success(tk._("Dataset saved as draft"))
