@@ -173,6 +173,13 @@ dataset_fields:
   form_snippet: multiple_text.html
   display_snippet: multiple_text.html
 
+- field_name: releaseDate
+  label: Release date
+  preset: date
+  required: true
+  validators: not_empty 
+  form_placeholder: eg. 2024-01-15
+
 # - filed_name: has_version
 #   label: Has Version
 #   form_snippet: null
@@ -305,12 +312,6 @@ dataset_fields:
   display_snippet: text.html
   form_snippet: null
 
-
-- field_name: publishing_status
-  label: Publishing Status
-  form_snippet: null
-  display_snippet: null
-  validators: ignore_missing publishing_status_validator
 
 - field_name: terms_agreed
   label: Terms
