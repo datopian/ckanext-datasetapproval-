@@ -175,6 +175,7 @@ class EditView(BaseEditView):
         package_type = _get_package_type(id) or package_type
         log.debug("Package save request name: %s POST: %r", id, tk.request.form)
         save_draft = tk.request.form.get("save") == "save-draft"
+        old_package = tk.get_action("package_show")(context, {"id": id})
 
         try:
             data_dict = logic.clean_dict(
@@ -197,6 +198,8 @@ class EditView(BaseEditView):
             
             # If it's not saved as draft, when user clicks "next: upload data"
             # it's going to automatically submit to review
+            # TODO: if user doesn't click on "save as draft", should it just
+            # become private before submiting for approval?
             data_dict["state"] = "draft"
 
             pkg_dict = tk.get_action("package_update")(context, data_dict)
@@ -204,7 +207,18 @@ class EditView(BaseEditView):
                 tk.h.flash_success(tk._("Dataset saved as draft"))
                 return self.get(package_type, id, data=pkg_dict)
             else:
-                return tk.redirect_to("approval_dataset.dataset_review", id=id)
+                # return tk.redirect_to("approval_dataset.dataset_review", id=id)
+                # Redirect to resources editing
+
+                resources = old_package.get("resources", [])
+
+                if len(resources) > 0:
+                    return tk.redirect_to(
+                            "resource.edit", id=pkg_dict["id"], resource_id=resources[0]["id"])
+
+                return tk.redirect_to("resource.new", id=pkg_dict["id"])
+
+
         except tk.NotAuthorized:
             return tk.abort(403, tk._("Unauthorized to read package %s") % id)
         except tk.ObjectNotFound:
