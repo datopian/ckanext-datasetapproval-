@@ -10,19 +10,28 @@ from ckan.logic.action.get import member_list as core_member_list
 log = logging.getLogger(__name__)
 
 
-def mail_package_review_request_to_admins(context, data_dict, _type="new"):
-    members = core_member_list(
-        context=context, data_dict={"id": data_dict.get("owner_org")}
-    )
-    org_admin = [i[0] for i in members if i[2] == "Admin"]
-
+def mail_package_review_request_to_admins(
+    context,
+    data_dict,
+    _type="new",
+):
     sysadmins = (
         model.Session.query(model.User.id)
         .filter(model.User.state != model.State.DELETED, model.User.sysadmin == True)
         .all()
     )
-    # Merged org admin and sysadmin so that sysadmin also gets the email.
-    admins = list(set(org_admin + [admin[0] for admin in sysadmins]))
+    # if dataset is not owned by any organization
+    if data_dict.get("owner_org") is None:
+        admins = [admin[0] for admin in sysadmins]
+    else:
+        members = core_member_list(
+            context=context, data_dict={"id": data_dict.get("owner_org")}
+        )
+        org_admin = [i[0] for i in members if i[2] == "Admin"]
+        # Merged org admin and sysadmin so that sysadmin also gets the email.
+
+        admins = list(set(org_admin + [admin[0] for admin in sysadmins]))
+
     for admin_id in admins:
         user = model.User.get(admin_id)
         if user.email:
@@ -70,7 +79,7 @@ def _get_publisher_name(context, id):
 
 
 def _compose_email_body_for_admins(context, data_dict, user, _type):
-    pkg_link = toolkit.url_for("dataset_read", id=data_dict["name"], qualified=True)
+    pkg_link = toolkit.url_for("dataset_read", id=data_dict["id"], qualified=True)
     admin_name = user.fullname or user.name
     site_title = config.get("ckan.site_title")
     site_url = config.get("ckan.site_url")

@@ -32,16 +32,26 @@ class CreateView(BaseCreateView):
     def __init__(self):
         super().__init__()
 
-    def get(self, package_type, data=None, errors=None, error_summary=None):
-        if data and data.get("agree") == "on":
-            data["terms_agreed"] = True
-            return super().get(package_type, data, {}, {})
-
-        if error_summary:
+    def get(
+        self,
+        package_type,
+        term_agree=False,
+        data=None,
+        errors=None,
+        error_summary=None,
+    ):
+        if term_agree:
+            return super().get(package_type, {}, {}, {})
+        if error_summary or errors:
             return super().get(package_type, data, errors, error_summary)
-        return terms_and_conditions(package_type)
+        return self._terms_and_conditions(package_type)
 
     def post(self, package_type):
+        # if the do not agree to the terms and conditions
+        term_agree = tk.request.form.get("terms_agree") in ["true", "on"]
+        if term_agree:
+            return self.get(package_type, term_agree)
+
         save_draft = tk.request.form.get("save") == "save-draft"
         alread_saved = tk.request.form.get("pkg_name")
         context = self._prepare()
@@ -51,6 +61,9 @@ class CreateView(BaseCreateView):
                     logic.tuplize_dict(logic.parse_params(tk.request.form))
                 )
             )
+            # if the user agreed to the terms and conditions
+            if term_agree:
+                data_dict["terms_agree"] = True
         except dict_fns.DataError:
             return tk.base.abort(400, tk._("Integrity Error"))
         try:
@@ -72,6 +85,13 @@ class CreateView(BaseCreateView):
             )
 
         return super().post(package_type)
+
+    def _terms_and_conditions(self, package_type):
+        data_dict = {}
+        return tk.render(
+            "package/snippets/terms_and_conditions.html",
+            extra_vars={"pkg_dict": data_dict},
+        )
 
 
 class EditView(BaseEditView):
@@ -192,19 +212,6 @@ class EditView(BaseEditView):
             return self.get(package_type, id, data_dict, errors, error_summary)
 
 
-def terms_and_conditions(package_type):
-    data_dict = {}
-    if tk.request.method == "POST":
-        data_dict["terms_agreed"] = True
-        if "agree" in tk.request.form:
-            return tk.redirect_to(tk.url_for("dataset.new"), {"terms_agreed": True})
-        else:
-            pass
-    return tk.render(
-        "package/snippets/terms_and_conditions.html", extra_vars={"pkg_dict": data_dict}
-    )
-
-
 def dataset_review(package_type, id):
     # Retrieve the context for CKAN's logic functions
     context = {
@@ -236,7 +243,9 @@ def dataset_publish(package_type, id):
     resources = sorted(resources, key=lambda x: x["created"], reverse=True)
 
     if tk.request.form["save"] == "go-resource":
-        return tk.redirect_to("resource.edit", id=pkg_dict["id"], resource_id=resources[0]["id"])
+        return tk.redirect_to(
+            "resource.edit", id=pkg_dict["id"], resource_id=resources[0]["id"]
+        )
 
     tk.get_action("package_patch")(context, {"id": id, "state": "active"})
     return tk.redirect_to("{}.read".format("dataset"), id=id)
@@ -244,7 +253,6 @@ def dataset_publish(package_type, id):
 
 dataset.add_url_rule("/new", view_func=CreateView.as_view(str("new")))
 dataset.add_url_rule("/edit/<id>", view_func=EditView.as_view(str("edit")))
-dataset.add_url_rule("/terms/agree", view_func=terms_and_conditions)
 dataset.add_url_rule("/<id>/review", view_func=dataset_review)
 dataset.add_url_rule("/<id>/publish", view_func=dataset_publish, methods=["POST"])
 
