@@ -41,8 +41,8 @@ class CreateView(BaseCreateView):
         error_summary=None,
     ):
         if term_agree:
-            return super().get(package_type, {}, {}, {})
-        if error_summary or errors:
+            return super().get(package_type, data, {}, {})
+        elif error_summary or errors or data:
             return super().get(package_type, data, errors, error_summary)
         return self._terms_and_conditions(package_type)
 
