@@ -29,31 +29,9 @@ def is_user_admin_of_org(org_id, user_id):
 
 
 def publishing_check(context, data_dict):
-    user_id = (
-        tk.current_user.id
-        if tk.current_user and not tk.current_user.is_anonymous
-        else None
-    )
-    org_id = data_dict.get("owner_org")
-    is_active = data_dict.get("state") in ["active", "publish", None, False]
-
-    is_user_editor = is_user_editor_of_org(org_id, user_id)
-    is_user_admin = is_user_admin_of_org(org_id, user_id)
-    is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
-
-    if (is_user_editor or is_unowned_dataset(org_id)) and is_active:
-        mailer.mail_package_review_request_to_admins(context, data_dict)
-        data_dict["state"] = "inreview"
-
-    # if sysadmin is updating the dataset and it's already in review state
-    # then it should remain in review state
-    _action_review = context.get("_action_review", False)
-    if not _action_review and data_dict.get("id"):
-        old_data_dict = tk.get_action("package_show")(
-            context, {"id": data_dict.get("id")}
-        )
-        if (is_user_admin or is_sysadmin) and old_data_dict.get("state") == "inreview":
-            data_dict["state"] = old_data_dict.get("state")
+    if context.get("allow_publish"):
+        return data_dict
+    data_dict["state"] = "draft"
     return data_dict
 
 def _add_or_update_org(context, package_dict):
@@ -166,22 +144,24 @@ def publish_dataset(context, id):
         else None
     )
     org_id = data_dict.get("owner_org")
+    data_dict["state"] = "active"
+    is_user_editor = is_user_editor_of_org(org_id, user_id)
     is_user_admin = is_user_admin_of_org(org_id, user_id)
     is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
 
-    if is_user_admin or is_sysadmin:
-        data_dict["state"] = "active"
-    else:
+    if is_user_editor or is_unowned_dataset(org_id):
         mailer.mail_package_review_request_to_admins(context, data_dict)
         data_dict["state"] = "inreview"
+
     try:
-        result = tk.get_action("package_update")(
+        data = tk.get_action("package_update")(
             {**context, "allow_publish": True}, data_dict
         )
+        print(data)
     except Exception as e:
         raise tk.ValidationError(str(e))
 
-    return {"success": True, "package": result}
+    return {"success": True}
 
 
 def dataset_review(context, data_dict):
@@ -197,7 +177,7 @@ def dataset_review(context, data_dict):
         tk.get_action("package_patch")(
             {
                 **context,
-                "_action_review": True,
+                "allow_publish": True,
             },
             {"id": id, "state": states[action]},
         )
