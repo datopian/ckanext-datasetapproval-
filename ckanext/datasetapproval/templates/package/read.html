@@ -30,11 +30,14 @@
     <div class="alert alert-warning" role="alert">
     <p>{% trans %}This dataset is waiting for an administrator approval.{% endtrans %}</p>
     <div style="margin-top: 10px">
-        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='approve') }}" class="btn btn-primary">
+        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='approve') }}" class="btn btn-primary" style="margin-left: 10px;">
         {% trans %}Approve Dataset{% endtrans %}
         </a>
-        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='reject') }}"class="btn btn-danger">
+        <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='reject') }}"class="btn btn-danger" style="margin-left: 10px;">
         {% trans %}Reject Dataset{% endtrans %}
+        </a>
+        <a href="{{ h.url_for('dataset.edit', id=c.pkg_dict.id) }}" class="btn btn-secondary" style="margin-left: 10px;">
+            {% trans %}Manage Dataset{% endtrans %}
         </a>
     </div>    
     </div>  
