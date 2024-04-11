@@ -29,7 +29,7 @@ def is_user_admin_of_org(org_id, user_id):
 
 
 def publishing_check(context, data_dict):
-    if context.get("allow_publish"):
+    if context.get("allow_publish") or data_dict.get("state") == "inreview":
         return data_dict
     data_dict["state"] = "draft"
     return data_dict
@@ -144,20 +144,19 @@ def publish_dataset(context, id):
         else None
     )
     org_id = data_dict.get("owner_org")
-    data_dict["state"] = "active"
-    is_user_editor = is_user_editor_of_org(org_id, user_id)
     is_user_admin = is_user_admin_of_org(org_id, user_id)
     is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
 
-    if is_user_editor or is_unowned_dataset(org_id):
+    if not is_user_admin or not is_sysadmin:
         mailer.mail_package_review_request_to_admins(context, data_dict)
         data_dict["state"] = "inreview"
-
+    else:
+        data_dict["state"] = "active"
+    
     try:
-        data = tk.get_action("package_update")(
+        tk.get_action("package_update")(
             {**context, "allow_publish": True}, data_dict
         )
-        print(data)
     except Exception as e:
         raise tk.ValidationError(str(e))
 

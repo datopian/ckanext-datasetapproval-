@@ -2,19 +2,28 @@
 
 {% block package_description %}
     {% if (c.pkg_dict.state  == "draft") %}
-    <div class="alert alert-info" role="alert">
-        <p>{% trans %}
-            Your dataset is in draft. Ensure all details are correct before review. Click 'Send for Review' when ready, or if you wish to revisit and manage your dataset, click the 'Manage Dataset' button.
-            {% endtrans %}</p>
-        <div style="margin-top: 10px">
-            <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='publish') }}" class="btn btn-primary">
-                {% trans %}Send for Review{% endtrans %}
-            </a>
+        <div class="alert alert-info" role="alert">
+            {% if h.check_access('dataset_review', {'dataset_id':c.pkg.id }) %}
+                <p>{% trans %}
+                    As an admin, you can publish this draft dataset directly. Please ensure all details are updated correctly before making it public. If changes are needed, you can return to the dataset manage page.
+                {% endtrans %}</p>
+                <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='publish') }}" class="btn btn-primary">
+                    {% trans %}Publish{% endtrans %}
+                </a>
+            {% else %}
+                <p>{% trans %}
+                    Your dataset is currently in draft. Please ensure all details are accurate before submitting for publication. 
+                    Once ready, you can either submit your dataset for review or return to the dataset manage page to make further changes.
+                    {% endtrans %}
+                </p>
+                <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='publish') }}" class="btn btn-primary">
+                    {% trans %}Send for Review{% endtrans %}
+                </a>
+            {% endif %}
             <a href="{{ h.url_for('dataset.edit', id=c.pkg_dict.id) }}" class="btn btn-secondary" style="margin-left: 10px;">
                 {% trans %}Manage Dataset{% endtrans %}
             </a>
-        </div> 
-    </div>
+        </div>
     {% endif %}
     
     {% if (c.pkg_dict.state  == "inreview") and h.check_access("dataset_review",{"dataset_id":c.pkg_dict.id }) %}
