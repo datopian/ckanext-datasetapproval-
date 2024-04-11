@@ -97,6 +97,16 @@ def review_action(id, action):
         "session": model.Session,
         "user": tk.c.user,
     }
+    if action == "publish":
+        context = {
+            "model": model,
+            "session": model.Session,
+            "user": tk.c.user,
+        }
+        tk.get_action("publish_dataset")(context, id)
+        tk.h.flash_success(tk._("Dataset has been published."))
+        return tk.redirect_to(controller="dataset", action="read", id=id)
+
     data_dict = {"dataset_id": id, "action": action}
     tk.get_action("dataset_review")(context, data_dict)
     if action == "reject":
@@ -110,7 +120,6 @@ def register_review_plugin_rules(blueprints):
     blueprints.add_url_rule(
         "/user/<id>/dataset/review", view_func=DatasetReviewView.as_view("review")
     )
-    blueprints.add_url_rule("/dataset/review/<id>/<action>", view_func=review_action)
     blueprints.add_url_rule("/dataset/review/<id>/<action>", view_func=review_action)
 
 

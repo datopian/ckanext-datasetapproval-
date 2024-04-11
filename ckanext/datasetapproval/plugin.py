@@ -35,6 +35,7 @@ class DatasetapprovalPlugin(
             "package_create": actions.package_create,
             "package_update": actions.package_update,
             "dataset_review": actions.dataset_review,
+            "publish_dataset": actions.publish_dataset,
         }
 
     # ITemplateHelpers
