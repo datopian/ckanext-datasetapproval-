@@ -47,7 +47,7 @@ class CreateView(BaseCreateView):
             if save_draft:
                 data_dict["state"] = "draft"
                 action = "package_update" if alread_saved else "package_create"
-                pkg_dict = tk.get_action(action)(context, data_dict)
+                pkg_dict = tk.get_action(action)({**context, "allow_state_change": True }, data_dict)
                 tk.h.flash_success(tk._("Dataset saved as draft"))
                 return self.get(package_type, data=pkg_dict)
         except tk.NotAuthorized:
