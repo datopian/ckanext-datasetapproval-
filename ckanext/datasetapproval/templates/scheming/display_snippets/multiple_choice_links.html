@@ -1,0 +1,18 @@
+{%- set values = data[field.field_name] -%}
+{%- set choices_list = [] -%}
+
+{%- for choice in h.scheming_field_choices(field) -%}
+    {%- if choice.value in values -%}
+      {%- do choices_list.append({'label':h.scheming_language_text(choice.label), 'url':h.scheming_language_text(choice.url)}) -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{%- if choices_list|length == 1 -%}
+  <a href="{{ choices_list[0]['url'] }}">{{ choices_list[0]['label'] }}</a>
+{%- else -%}
+    <ul>
+    {%- for choice_item in choices_list -%}
+      <li><a href="{{ choice_item['url'] }}">{{ choice_item['label'] }}</a></li>
+    {%- endfor -%}
+    </ul>
+{%- endif -%}
