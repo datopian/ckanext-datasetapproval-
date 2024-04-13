@@ -30,108 +30,109 @@ dataset_fields:
   - value: gemet
     label: GEMET
     sub_items:
-      - value: ad
+      - value: addresses
         label: Addresses
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/ad
-      - value: au
+      - value: administrative_units
         label: Administrative units
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/au
-      - value: af
+      - value: agricultural_and_aquaculture_facilities
         label: Agricultural and aquaculture facilities
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/af
-      - value: am
+      - value: area_management/restriction/regulation_zones_and_reporting_units
         label: Area management/restriction/regulation zones and reporting units
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/am
-      - value: ac
+      - value: atmospheric_conditions
         label: Atmospheric conditions
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/ac
-      - value: br
+      - value: bio-geographical_regions
         label: Bio-geographical regions
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/br
-      - value: bu
+      - value: buildings
         label: Buildings
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/bu
-      - value: cp
+      - value: cadastral_parcels
         label: Cadastral parcels
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/cp
-      - value: rs
+      - value: coordinate_reference_systems
         label: Coordinate reference systems
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/rs
-      - value: el
+      - value: elevation
         label: Elevation
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/el
-      - value: er
+      - value: energy_resources
         label: Energy resources
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/er
-      - value: ef
+      - value: environmental_monitoring_facilities
         label: Environmental monitoring facilities
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/ef
-      - value: gg
+      - value: geographical_grid_systems
         label: Geographical grid systems
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/gg
-      - value: gn
+      - value: geographical_names
         label: Geographical names
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/gn
-      - value: ge
+      - value: geology
         label: Geology
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/ge
-      - value: hb
+      - value: habitats_and_biotopes
         label: Habitats and biotopes
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/hb
-      - value: hh
+      - value: human_health_and_safety
         label: Human health and safety
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/hh
-      - value: hy
+      - value: hydrography
         label: Hydrography
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/hy
-      - value: lc
+      - value: land_cover
         label: Land cover
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/lc
-      - value: lu
+      - value: land_use
         label: Land use
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/lu
-      - value: mf
+      - value: meteorological_geographical_features
         label: Meteorological geographical features
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/mf
-      - value: mr
+      - value: mineral_resources
         label: Mineral resources
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/mr
-      - value: nz
+      - value: natural_risk_zones
         label: Natural risk zones
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/nz
-      - value: of
+      - value: oceanographic_geographical_features
         label: Oceanographic geographical features
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/of
-      - value: oi
+      - value: orthoimagery
         label: Orthoimagery
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/oi
-      - value: pd
+      - value: "population_distribution_\xE2\u20AC\u201D_demography"
         label: "Population distribution \xE2\u20AC\u201D demography"
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/pd
-      - value: pf
+      - value: production_and_industrial_facilities
         label: Production and industrial facilities
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/pf
-      - value: ps
+      - value: protected_sites
         label: Protected sites
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/ps
-      - value: sr
+      - value: sea_regions
         label: Sea regions
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/sr
-      - value: so
+      - value: soil
         label: Soil
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/so
-      - value: sd
+      - value: species_distribution
         label: Species distribution
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/sd
-      - value: su
+      - value: statistical_units
         label: Statistical units
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/su
-      - value: tn
+      - value: transport_networks
         label: Transport networks
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/tn
-      - value: us
+      - value: utility_and_governmental_services
         label: Utility and governmental services
         url: https://www.eionet.europa.eu/gemet/en/inspire-themes/us
+
   - value: cf_standard_names
     label: CF standard names
     sub_items:
@@ -238,56 +239,48 @@ dataset_fields:
   label: Contact points
   repeating_label: Contact point
   repeating_subfields:
-
-  - field_name: fname
+  - field_name: first_name
     label: First name
-    
-  - field_name: lname
+  - field_name: last_name
     label: Last name
-
   - field_name: organisation
     label: Organisation
-
   - field_name: email
     label: Email
 
-# - field_name: creators
-#   label: Creators
-#   form_snippet: repeating_subfields.html
-#   display_snippet: repeating_subfields.html
-#   repeating_label: Creator
-#   repeating_subfields:
-#   - field_name: first_name
-#     label: First name
-#     required: false
-#   - field_name: last_name
-#     label: Last name
-#     required: false
-#   - field_name: organisation
-#     label: Organisation
-#     required: false
-#   - field_name: email
-#     label: Email
-#     required: false
+- field_name: creators
+  label: Creators
+  repeating_label: Creator
+  repeating_subfields:
+  - field_name: first_name
+    label: First name
+    required: false
+  - field_name: last_name
+    label: Last name
+    required: false
+  - field_name: organisation
+    label: Organisation
+    required: false
+  - field_name: email
+    label: Email
+    required: false
 
-# - field_name: contributors
-#   label: Contributors
-#   form_snippet: repeating_subfields.html
-#   display_snippet: repeating_subfields.html
-#   repeating_label: Contributor
-#   repeating_subfields:
-#   - field_name: first_name
-#     label: First name
-#     required: false
-#   - field_name: last_name
-#     label: Last name
-#     required: false
-#   - field_name: organisation
-#     label: Organisation
-#     required: false
-#   - field_name: email
-#     label: Email
-#     required: false
+- field_name: contributors
+  label: Contributors
+  repeating_label: Contributor
+  repeating_subfields:
+  - field_name: first_name
+    label: First name
+    required: false
+  - field_name: last_name
+    label: Last name
+    required: false
+  - field_name: organisation
+    label: Organisation
+    required: false
+  - field_name: email
+    label: Email
+    required: false
 
 - field_name: publisher
   label: Publisher
@@ -457,12 +450,6 @@ dataset_fields:
   label: Extent
   display_snippet: text.html
   form_snippet: null
-
-- field_name: publishing_status
-  label: Publishing Status
-  form_snippet: null
-  display_snippet: null
-  validators: ignore_missing
 
 - field_name: terms_agreed
   label: Terms
