@@ -27,10 +27,29 @@ class DatasetapprovalPlugin(
 
     # IPackageController
     def before_dataset_index(self, data_dict):
-        if data_dict.get("contact_points", False):
-            # convert the dict to json
-            data_dict["contact_points"] = json.dumps(data_dict["contact_points"])
+        from ckanext.scheming.logic import scheming_dataset_schema_show
+
+        # Get all field names with repeating_subfields key
+        field_names = []
+
+        # Correctly construct the data dictionary to include both 'id' and 'type'
+        schema_name = 'dataset_schema'
+        schema_data = scheming_dataset_schema_show({"id": schema_name, "type": "dataset"}, 'dataset')
+        schema = schema_data.get("dataset_schema", {})
+        
+        print(schema_data)
+        print(schema)
+        
+        for field_name, field_info in schema.items():
+            if "repeating_subfields" in field_info:
+                field_names.append(field_name)
+
+        for field_name in field_names:
+            if field_name in data_dict and data_dict[field_name] is not None:
+                data_dict[field_name] = json.dumps(data_dict[field_name])
+            
         return data_dict
+
 
     # IConfigurer
     def update_config(self, config_):
