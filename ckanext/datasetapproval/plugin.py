@@ -10,6 +10,7 @@ from ckanext.datasetapproval import auth, actions, helpers, validation
 from ckan.lib.plugins import DefaultPermissionLabels
 
 from ckanext.datasetapproval import views
+from ckanext.datasetapproval.actions import get_dataset_schema 
 
 log = logging.getLogger(__name__)
 
@@ -27,23 +28,13 @@ class DatasetapprovalPlugin(
 
     # IPackageController
     def before_dataset_index(self, data_dict):
-        from ckanext.scheming.logic import scheming_dataset_schema_show
-
-        # Get all field names with repeating_subfields key
+        schema = get_dataset_schema()
         field_names = []
 
-        # Correctly construct the data dictionary to include both 'id' and 'type'
-        schema_name = 'dataset_schema'
-        schema_data = scheming_dataset_schema_show({"id": schema_name, "type": "dataset"}, 'dataset')
-        schema = schema_data.get("dataset_schema", {})
-        
-        print(schema_data)
-        print(schema)
-        
-        for field_name, field_info in schema.items():
-            if "repeating_subfields" in field_info:
-                field_names.append(field_name)
-
+        for field_info in schema.get('dataset_fields', []):
+            if "repeating_subfields" in field_info.keys():
+                field_names.append(field_info['field_name'])
+              
         for field_name in field_names:
             if field_name in data_dict and data_dict[field_name] is not None:
                 data_dict[field_name] = json.dumps(data_dict[field_name])
