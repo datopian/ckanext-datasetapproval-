@@ -43,3 +43,6 @@ docs/_build/
 
 test.ini
 settings.json
+
+# IDE
+.ipynb

@@ -3,3 +3,12 @@ datasetapproval_css:
   output: ckanext-datasetapproval/%(version)s-approval.css
   contents:
     - css/approval.css
+
+datasetapproval_js:
+  filter: rjsmin
+  output: ckanext-datasetapproval/%(version)s-datasetapproval.js
+  contents:
+    - js/datasetapproval.js
+  extra:
+    preload:
+      - base/main
