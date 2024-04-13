@@ -1,5 +1,6 @@
 # Standard library imports
 import logging
+import json
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
@@ -22,6 +23,14 @@ class DatasetapprovalPlugin(
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IPermissionLabels, inherit=True)
+    plugins.implements(plugins.IPackageController, inherit=True)
+
+    # IPackageController
+    def before_dataset_index(self, data_dict):
+        if data_dict.get("contact_points", False):
+            # convert the dict to json
+            data_dict["contact_points"] = json.dumps(data_dict["contact_points"])
+        return data_dict
 
     # IConfigurer
     def update_config(self, config_):
