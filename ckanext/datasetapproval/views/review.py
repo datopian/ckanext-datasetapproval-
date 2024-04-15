@@ -103,8 +103,9 @@ def review_action(id, action):
             "session": model.Session,
             "user": tk.c.user,
         }
-        tk.get_action("publish_dataset")(context, id)
-        tk.h.flash_success(tk._("Dataset has been published."))
+        result = tk.get_action("publish_dataset")(context, id)
+        if result.get("package").get("state") != "inreview":
+            tk.h.flash_success(tk._("Dataset has been published."))
         return tk.redirect_to(controller="dataset", action="read", id=id)
 
     data_dict = {"dataset_id": id, "action": action}

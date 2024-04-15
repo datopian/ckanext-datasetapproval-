@@ -154,13 +154,13 @@ def publish_dataset(context, id):
         data_dict["state"] = "active"
     
     try:
-        tk.get_action("package_update")(
+        result = tk.get_action("package_update")(
             {**context, "allow_publish": True}, data_dict
         )
     except Exception as e:
         raise tk.ValidationError(str(e))
 
-    return {"success": True}
+    return {"success": True, "package": result }
 
 
 def dataset_review(context, data_dict):
