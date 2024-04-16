@@ -31,7 +31,25 @@ class CreateView(BaseCreateView):
     def __init__(self):
         super().__init__()
 
+    def get(
+        self,
+        package_type,
+        term_agree=False,
+        data=None,
+        errors=None,
+        error_summary=None,
+    ):
+        if term_agree:
+            return super().get(package_type, data, {}, {})
+        elif error_summary or errors or data:
+            return super().get(package_type, data, errors, error_summary)
+        return self._terms_and_conditions(package_type)
+
     def post(self, package_type):
+        term_agree = tk.request.form.get("terms_agree") in ["true", "on"]
+        if term_agree:
+            return self.get(package_type, term_agree)
+
         save_draft = tk.request.form.get("save") == "save-draft"
         alread_saved = tk.request.form.get("pkg_name")
         context = self._prepare()
@@ -41,6 +59,9 @@ class CreateView(BaseCreateView):
                     logic.tuplize_dict(logic.parse_params(tk.request.form))
                 )
             )
+             # if the user agreed to the terms and conditions
+            if term_agree:
+                data_dict["terms_agree"] = True
         except dict_fns.DataError:
             return tk.base.abort(400, tk._("Integrity Error"))
         try:
@@ -61,6 +82,13 @@ class CreateView(BaseCreateView):
                 package_type, data=data_dict, errors=errors, error_summary=error_summary
             )
         return super().post(package_type)
+
+    def _terms_and_conditions(self, package_type):
+        data_dict = {}
+        return tk.render(
+            "package/snippets/terms_and_conditions.html",
+            extra_vars={"pkg_dict": data_dict},
+        )
 
 
 class EditView(BaseEditView):
@@ -91,7 +119,7 @@ class EditView(BaseEditView):
         user = current_user.name
 
         try:
-            tk.check_access("package_update", context)
+            tk.check_access("package_update", context, pkg_dict)
         except tk.NotAuthorized:
             return tk.base.abort(
                 403, tk._("User %r not authorized to edit %s") % (user, id)

@@ -1,0 +1,14 @@
+{% ckan_extends %}
+{% block styles %}
+    {{ super() }}
+    {% asset 'datasetapproval/datasetapproval_css' %}
+    {% asset 'datasetapproval/datasetapproval_js' %}
+{% endblock %}
+
+{% block primary %}
+    <div class="primary col-md-9 col-xs-12" role="main">
+    {% block primary_content %}
+        {{ super() }}
+    {% endblock %}
+    </div>
+{% endblock %}

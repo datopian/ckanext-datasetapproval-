@@ -2,8 +2,9 @@ datasetapproval_js:
   filter: rjsmin
   output: ckanext-datasetapproval/%(version)s-form-save.js
   contents:
-    - js/dataset-visibility.js
-    - js/form-submit.js
+    # - js/dataset-visibility.js
+    # - js/form-submit.js
+    - js/org-autocomplete.js
   extra:
     preload:
       - base/main

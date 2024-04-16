@@ -17,7 +17,7 @@
                     {% endtrans %}
                 </p>
                 <a href="{{ h.url_for('approval.review_action', id=c.pkg_dict.id, action='publish') }}" class="btn btn-primary">
-                    {% trans %}Send for Review{% endtrans %}
+                    {% trans %}Submit to review{% endtrans %}
                 </a>
             {% endif %}
             <a href="{{ h.url_for('dataset.edit', id=c.pkg_dict.id) }}" class="btn btn-secondary" style="margin-left: 10px;">

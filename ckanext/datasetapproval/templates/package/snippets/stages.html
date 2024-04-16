@@ -1,0 +1,32 @@
+{% macro set_class(stages, active_stages) %}
+    {% if stages in active_stages %}
+        active
+    {% else %}
+        complete
+    {% endif %}
+{% endmacro %}
+
+{% macro set_label(stages, default_label, edit_label) %}
+    {% if 'edit' in stages %}
+        {{ _(edit_label) }}
+    {% else %}
+        {{ _(default_label) }}
+    {% endif %}
+{% endmacro %}
+
+<ol class="stages {{ class }}">
+    {% if stages != "dataset.edit" %}
+        <li class="{{ set_class(stages, ['dataset.terms']) }}">
+            <span class="highlight"> {{ set_label(stages, 'Terms and conditions', 'Terms and conditions') }}</span>
+        </li>
+    {% endif %}
+    <li class="{{ set_class(stages, ['dataset.new', 'dataset.edit']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Add metadata', 'Update metadata') }}</span>
+    </li>
+    <li class="{{ set_class(stages, ['resource.new', 'resource.edit']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Upload data', 'Update data') }}</span>
+    </li>
+    <li class="{{ set_class(stages, ['dataset.review']) }}">
+        <span class="highlight"> {{ set_label(stages, 'Submit to review', 'Submit to review') }}</span>
+    </li>
+</ol>
