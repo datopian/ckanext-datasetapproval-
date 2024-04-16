@@ -104,7 +104,7 @@ def review_action(id, action):
             "user": tk.c.user,
         }
         result = tk.get_action("publish_dataset")(context, id)
-        if result.get("package").get("state") != "inreview":
+        if result.get("package").get("state") == "active":
             tk.h.flash_success(tk._("Dataset has been published."))
         return tk.redirect_to(controller="dataset", action="read", id=id)
 

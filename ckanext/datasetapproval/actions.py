@@ -65,12 +65,11 @@ def publish_dataset(context, id):
     is_user_admin = is_user_admin_of_org(org_id, user_id)
     is_sysadmin = hasattr(tk.current_user, "sysadmin") and tk.current_user.sysadmin
 
-    if not is_user_admin or not is_sysadmin:
+    if is_user_admin or is_sysadmin:
+        data_dict["state"] = "active"
+    else:
         mailer.mail_package_review_request_to_admins(context, data_dict)
         data_dict["state"] = "inreview"
-    else:
-        data_dict["state"] = "active"
-    
     try:
         result = tk.get_action("package_update")(
             {**context, "allow_publish": True}, data_dict
@@ -78,7 +77,7 @@ def publish_dataset(context, id):
     except Exception as e:
         raise tk.ValidationError(str(e))
 
-    return {"success": True, "package": result }
+    return {"success": True, "package": result}
 
 
 def dataset_review(context, data_dict):
