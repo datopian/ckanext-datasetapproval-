@@ -1,5 +1,6 @@
 # Standard library imports
 import logging
+import json
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
@@ -9,6 +10,7 @@ from ckanext.datasetapproval import auth, actions, helpers, validation
 from ckan.lib.plugins import DefaultPermissionLabels
 
 from ckanext.datasetapproval import views
+from ckanext.datasetapproval.actions import get_dataset_schema
 
 log = logging.getLogger(__name__)
 
@@ -22,6 +24,22 @@ class DatasetapprovalPlugin(
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IPermissionLabels, inherit=True)
+    plugins.implements(plugins.IPackageController, inherit=True)
+
+    # IPackageController
+    def before_dataset_index(self, data_dict):
+        schema = get_dataset_schema()
+        field_names = []
+
+        for field_info in schema.get('dataset_fields', []):
+            if "repeating_subfields" in field_info.keys():
+                field_names.append(field_info['field_name'])
+
+        for field_name in field_names:
+            if field_name in data_dict and data_dict[field_name] is not None:
+                data_dict[field_name] = json.dumps(data_dict[field_name])
+
+        return data_dict
 
     # IConfigurer
     def update_config(self, config_):
