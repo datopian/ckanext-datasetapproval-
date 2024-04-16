@@ -9,6 +9,11 @@
   color: #006D84 !important;
 }
 
+/* .breadcrumb */
+.breadcrumb .active a{
+  color: #006D84 !important;
+}
+
 /* Main CSS */
 
 .main {
