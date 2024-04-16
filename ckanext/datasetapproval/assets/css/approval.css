@@ -563,6 +563,11 @@ form#organization-search-form + ul.media-grid li {
   border-bottom: 1px solid #006D84;;
 }
 
+.row:has(header.module-content.page-header) aside .nums{
+  border-top: 1px solid #006D84;
+  border-bottom: 1px solid #006D84;;
+}
+
 .row:has(header.module-content.page-header) aside dd span{
   font-weight: 700;
   font-size: 40px;
