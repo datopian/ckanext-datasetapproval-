@@ -369,6 +369,67 @@
   margin-top: 20px;
 }
 
+/* Scheming multiple select with sublists */
+.multi-select ul, .multi-select ul .sub-items {
+  list-style: none; /* Removes list bullets */
+  padding-left: 0; /* Removes list padding */
+  margin-left: 0; /* Aligns with the multi-select container */
+}
+
+/* Main category title styles */
+/* Resets */
+.multi-select,
+.multi-select ul,
+.multi-select ul .sub-items {
+  list-style: none; /* Removes bullets */
+  padding-left: 0; /* Removes indentation */
+  margin: 0; /* Removes default margin */
+  margin-left: 10px; /* Indents the main category labels */
+}
+
+/* Styles for the main category labels and toggle arrow */
+.multi-select > ul > li > label {
+  cursor: pointer; /* Indicates the element is clickable */
+  vertical-align: middle; /* Aligns with the toggle arrow */
+  font-weight: normal; /* No bold font */
+}
+
+.toggle-sublist {
+  cursor: pointer; /* Indicates it's clickable */
+  user-select: none; /* Prevents text selection */
+  margin-right: 5px; /* Spacing between arrow and label */
+}
+
+/* Styles for sub-items list */
+.multi-select .sub-items {
+  display: none; /* Hide by default */
+  margin-top: 5px; /* Space between category label and sublist items */
+  padding-left: 30px; /* Aligns sublist items with the main items */
+}
+
+/* Styles for sublist items (labels and checkboxes) */
+.sub-items li {
+  display: flex;
+  align-items: center; /* Center aligns items vertically */
+  margin-bottom: 5px; /* Space between sublist items */
+}
+
+.sub-items li input[type="checkbox"] {
+  width: auto; /* Adjusts checkbox width */
+  margin-right: 10px; /* Space between checkbox and label */
+  margin-left: 20px; /* Indent checkbox to align with sublist items */
+}
+
+.sub-items li label {
+  font-weight: normal; /* No bold font */
+  white-space: nowrap; /* Ensures label text does not wrap */
+}
+
+/* Remove the :after content on labels, if it exists */
+.sub-items li label::after {
+  content: none;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -632,4 +693,66 @@ form#dataset-search-form input  + .input-group-btn{
   font-size: 16px;
   line-height: 20px;
   color: #000000;
+}
+
+
+/* Scheming multiple select with sublists */
+.multi-select ul, .multi-select ul .sub-items {
+  list-style: none; /* Removes list bullets */
+  padding-left: 0; /* Removes list padding */
+  margin-left: 0; /* Aligns with the multi-select container */
+}
+
+/* Main category title styles */
+/* Resets */
+.multi-select,
+.multi-select ul,
+.multi-select ul .sub-items {
+  list-style: none; /* Removes bullets */
+  padding-left: 0; /* Removes indentation */
+  margin: 0; /* Removes default margin */
+  margin-left: 10px; /* Indents the main category labels */
+}
+
+/* Styles for the main category labels and toggle arrow */
+.multi-select > ul > li > label {
+  cursor: pointer; /* Indicates the element is clickable */
+  vertical-align: middle; /* Aligns with the toggle arrow */
+  font-weight: normal; /* No bold font */
+}
+
+.toggle-sublist {
+  cursor: pointer; /* Indicates it's clickable */
+  user-select: none; /* Prevents text selection */
+  margin-right: 5px; /* Spacing between arrow and label */
+}
+
+/* Styles for sub-items list */
+.multi-select .sub-items {
+  display: none; /* Hide by default */
+  margin-top: 5px; /* Space between category label and sublist items */
+  padding-left: 30px; /* Aligns sublist items with the main items */
+}
+
+/* Styles for sublist items (labels and checkboxes) */
+.sub-items li {
+  display: flex;
+  align-items: center; /* Center aligns items vertically */
+  margin-bottom: 5px; /* Space between sublist items */
+}
+
+.sub-items li input[type="checkbox"] {
+  width: auto; /* Adjusts checkbox width */
+  margin-right: 10px; /* Space between checkbox and label */
+  margin-left: 20px; /* Indent checkbox to align with sublist items */
+}
+
+.sub-items li label {
+  font-weight: normal; /* No bold font */
+  white-space: nowrap; /* Ensures label text does not wrap */
+}
+
+/* Remove the :after content on labels, if it exists */
+.sub-items li label::after {
+  content: none;
 }
