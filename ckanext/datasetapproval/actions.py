@@ -4,6 +4,7 @@ import ckan.authz as authz
 from ckan.plugins import toolkit as tk
 from ckanext.datasetapproval import mailer
 from ckan import logic
+from ckan import model
 
 log = logging.getLogger()
 
@@ -85,6 +86,36 @@ def package_patch(up_func, context, data_dict):
     data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
+
+
+@tk.chained_action
+@tk.side_effect_free
+def user_show(up_func, context, data_dict):
+    final_result = up_func(context, data_dict)
+
+    user_name = data_dict.get("id")
+    if user_name:
+        # In order to get "plugin_extras", it's necessary to
+        # request "user_show" as a sysadmin and ignore_auth
+        # doesn't work, so accessing the model directly.
+        user_obj = model.User.get(user_name)
+
+        if user_obj is not None:
+            user_has_review_permission = False
+
+            plugin_extras = user_obj.plugin_extras
+            if plugin_extras:
+                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+
+            user_is_sysadmin = user_obj.sysadmin
+
+            # User has review permission if:
+            # 1) The user is a sysadmin
+            # 2) The user has "user_has_review_permission=True" in plugin_extras
+            final_result["user_has_review_permission"] = \
+                user_has_review_permission or user_is_sysadmin
+
+    return final_result
 
 
 def publish_dataset(context, id):

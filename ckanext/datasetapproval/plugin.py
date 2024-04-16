@@ -36,7 +36,8 @@ class DatasetapprovalPlugin(
             "package_update": actions.package_update,
             "dataset_review": actions.dataset_review,
             "publish_dataset": actions.publish_dataset,
-            "org_autocomplete": actions.org_autocomplete
+            "org_autocomplete": actions.org_autocomplete,
+            "user_show": actions.user_show
         }
 
     # ITemplateHelpers
@@ -47,7 +48,7 @@ class DatasetapprovalPlugin(
 
     # IBlueprint
     def get_blueprint(self):
-        blueprints = [views.dataset.registred_views(), views.review.registred_views()]
+        blueprints = [views.dataset.registred_views(), views.review.registred_views(), views.user.registred_views()]
         blueprints.extend(views.resource.registred_views())
         return blueprints
 
