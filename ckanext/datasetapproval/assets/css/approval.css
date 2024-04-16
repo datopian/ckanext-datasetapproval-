@@ -497,6 +497,11 @@ form#organization-search-form + ul.media-grid li {
   color: #4E4E4E;
 }
 
+.row:has(header.module-content.page-header) aside .nums{
+  border-top: 1px solid #006D84;
+  border-bottom: 1px solid #006D84;;
+}
+
 .row:has(header.module-content.page-header) aside dd span{
   font-weight: 700;
   font-size: 40px;
@@ -580,4 +585,51 @@ form#organization-datasets-search-form + ul.media-grid{
 
 form#organization-datasets-search-form + ul.media-grid li {
   border-radius: 5px;
+}
+
+/* End Single organization Page */
+
+/* Start Datasets Page */
+form#dataset-search-form select{
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+form#dataset-search-form input {
+  border: 2px solid #006D84;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 10px 26px;
+}
+
+form#dataset-search-form input  + .input-group-btn{
+  display: none;
+}
+/* End Datasets Page */
+
+/* Start Dataset List */
+.dataset-list li{
+  padding: 14px 16px;
+  background-color: #E5E5E5;
+  border-radius: 5px;
+} 
+
+.dataset-list li h2{
+  font-family: Calibri, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  color: #000000;
+}
+
+
+.dataset-list li .empty{
+  font-family: Calibri, sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000000;
 }
