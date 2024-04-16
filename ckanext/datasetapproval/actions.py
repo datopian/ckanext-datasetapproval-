@@ -4,8 +4,6 @@ import ckan.authz as authz
 from ckan.plugins import toolkit as tk
 from ckanext.datasetapproval import mailer
 from ckan import logic
-from ckanext.scheming.logic import scheming_dataset_schema_show
-from ckan import model
 
 log = logging.getLogger()
 
@@ -65,53 +63,11 @@ def _add_or_update_org(context, package_dict):
 
     return package_dict
 
-def get_dataset_schema():
-    context = {
-        'model': model,
-        'session': model.Session,
-        'user': None,
-        'ignore_auth': True
-    }
-
-    data_dict = {
-        'type': 'dataset',
-        'expanded': True
-    }
-
-    try:
-        schema_data = scheming_dataset_schema_show(context, data_dict)
-        return schema_data
-    except Exception as e:
-        print(f"Error retrieving dataset schema: {e}")
-        return None
-
-def clean_dictionary(data_dict):
-    schema = get_dataset_schema()
-    keys = []
-
-    for field_info in schema.get('dataset_fields', []):
-        if "repeating_subfields" in field_info.keys():
-            keys.append(field_info['field_name'])
-
-    cleaned_dict = dict(data_dict)
-
-    for key in keys:
-        if key in cleaned_dict:
-            remove_key = True
-            for entry in cleaned_dict[key]:
-                for value in entry.values():
-                    if value != "":
-                        remove_key = False
-                        break
-            if remove_key:
-                del cleaned_dict[key]
-
-    return cleaned_dict
-
 @tk.chained_action
 def package_create(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
+    data_dict = _add_or_update_org(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
@@ -122,6 +78,7 @@ def package_update(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
+    data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
@@ -130,6 +87,7 @@ def package_update(up_func, context, data_dict):
 def package_patch(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
+    data_dict = _add_or_update_org(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
@@ -183,6 +141,30 @@ def dataset_review(context, data_dict):
         raise tk.ValidationError(str(e))
 
     return {"success": True}
+
+
+def _org_autocomplete(context, data_dict):
+    q = data_dict['q']
+    limit = data_dict.get('limit', 20)
+    model = context['model']
+
+    query = model.Group.search_by_name_or_title(q, group_type="org",
+                                                is_org=False, limit=limit)
+
+    org_list = []
+    for group in query.all():
+        result_dict = {}
+        for k in ['id', 'name', 'title']:
+            result_dict[k] = getattr(group, k)
+        org_list.append(result_dict)
+
+    return org_list
+
+
+@tk.side_effect_free
+def org_autocomplete(context, data_dict):
+    logic.check_access('group_autocomplete', context, data_dict)
+    return _org_autocomplete(context, data_dict)
 
 
 def _org_autocomplete(context, data_dict):

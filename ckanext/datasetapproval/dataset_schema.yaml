@@ -16,6 +16,10 @@ dataset_fields:
   preset: dataset_slug
   form_placeholder: eg. my-dataset
 
+- field_name: org 
+  label: Organization
+  preset: org_autocomplete
+
 - field_name: tag_string
   label: Keywords
   preset: tag_string_autocomplete

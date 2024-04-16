@@ -5,7 +5,6 @@ datasetapproval_js:
     # - js/dataset-visibility.js
     # - js/form-submit.js
     - js/org-autocomplete.js
-    - js/multiple-sublists.js
   extra:
     preload:
       - base/main
@@ -15,3 +14,4 @@ datasetapproval_css:
   output: ckanext-datasetapproval/%(version)s-approval.css
   contents:
     - css/approval.css
+
