@@ -113,7 +113,6 @@ def package_create(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
-    data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
@@ -123,7 +122,6 @@ def package_update(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
-    data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
 
@@ -132,7 +130,6 @@ def package_update(up_func, context, data_dict):
 def package_patch(up_func, context, data_dict):
     data_dict = clean_dictionary(data_dict)
     publishing_check(context, data_dict)
-    data_dict = _add_or_update_org(context, data_dict)
     data_dict = _add_or_update_org(context, data_dict)
     result = up_func(context, data_dict)
     return result
@@ -186,30 +183,6 @@ def dataset_review(context, data_dict):
         raise tk.ValidationError(str(e))
 
     return {"success": True}
-
-
-def _org_autocomplete(context, data_dict):
-    q = data_dict['q']
-    limit = data_dict.get('limit', 20)
-    model = context['model']
-
-    query = model.Group.search_by_name_or_title(q, group_type="org",
-                                                is_org=False, limit=limit)
-
-    org_list = []
-    for group in query.all():
-        result_dict = {}
-        for k in ['id', 'name', 'title']:
-            result_dict[k] = getattr(group, k)
-        org_list.append(result_dict)
-
-    return org_list
-
-
-@tk.side_effect_free
-def org_autocomplete(context, data_dict):
-    logic.check_access('group_autocomplete', context, data_dict)
-    return _org_autocomplete(context, data_dict)
 
 
 def _org_autocomplete(context, data_dict):
