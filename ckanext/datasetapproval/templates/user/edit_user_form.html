@@ -1,0 +1,24 @@
+{% ckan_extends %}
+
+{% set user_is_sysadmin = h.check_access('sysadmin') %}
+{% set user_has_review_permission = data.user_has_review_permission %}
+
+<!-- Users who are not sysadmin cannot modify this field -->
+{% set attrs = {"disabled": "disabled"} if not user_is_sysadmin else {} %}
+
+{% block extra_fields %}
+    <!-- Only users with review permission or sysadmin can see this field -->
+    <!-- It won't show on the sysadmin's edit form -->
+    {% if (user_has_review_permission or user_is_sysadmin) and not data.sysadmin %}
+        {% call form.checkbox('user_has_review_permission', label=_('User has review permission'), 
+            id='field-user-has-review-permission', value=True, checked=user_has_review_permission, 
+            attrs=attrs) %}
+            {% set helper_text = _("Allow the user to see, manage and review all datasets.") %}
+            {{ form.info(helper_text) }}
+        {% endcall %}
+    {% endif %}
+
+    {{ super() }}
+{% endblock %}
+
+

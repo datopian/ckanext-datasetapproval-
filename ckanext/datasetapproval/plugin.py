@@ -54,18 +54,24 @@ class DatasetapprovalPlugin(
             "package_update": actions.package_update,
             "dataset_review": actions.dataset_review,
             "publish_dataset": actions.publish_dataset,
-            "org_autocomplete": actions.org_autocomplete
+            "org_autocomplete": actions.org_autocomplete,
+            "user_show": actions.user_show
         }
 
     # ITemplateHelpers
     def get_helpers(self):
         return {
             "is_dataset_owner": helpers.is_dataset_owner,
+            "is_dataset_collaborator": helpers.is_dataset_collaborator,
         }
 
     # IBlueprint
     def get_blueprint(self):
-        blueprints = [views.dataset.registred_views(), views.review.registred_views()]
+        blueprints = [
+                views.dataset.registred_views(),
+                views.review.registred_views(),
+                views.user.registred_views(),
+                views.admin.registred_views()]
         blueprints.extend(views.resource.registred_views())
         return blueprints
 
@@ -82,11 +88,14 @@ class DatasetapprovalPlugin(
         if tk.current_user and tk.current_user.is_authenticated:
             user_id = tk.c.userobj.id
 
-        capacity = authz.users_role_for_group_or_org(dataset_obj.owner_org, user_id)
-        is_org_admin = capacity == "admin"
-        # Editor shouldn't be able to collaborate on a dataset
-        if dataset_obj.creator_user_id != user_id and dataset_obj.state not in [
-            "active"
-        ] and not is_org_admin:
-            return []
+        # TODO: the code below likely can be removed
+        if dataset_obj.owner_org:
+            capacity = authz.users_role_for_group_or_org(dataset_obj.owner_org, user_id)
+            is_org_admin = capacity == "admin"
+            # Editor shouldn't be able to collaborate on a dataset
+            if dataset_obj.creator_user_id != user_id and dataset_obj.state not in [
+                "active"
+            ] and not is_org_admin:
+                return []
+
         return labels

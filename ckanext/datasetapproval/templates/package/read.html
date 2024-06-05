@@ -41,7 +41,7 @@
         </a>
     </div>    
     </div>  
-    {% elif  c.pkg_dict.state == "inreview" and h.is_dataset_owner(c.pkg_dict, c.userobj.id) %}
+    {% elif  c.pkg_dict.state == "inreview" and (h.is_dataset_owner(c.pkg_dict, c.userobj.id) or h.is_dataset_collaborator(c.pkg_dict, c.userobj.id)) %}
     <div class="alert alert-warning" role="alert">
         <p>{{ _("This dataset is waiting for an administrator to review.") }}</p>    
     </div>
