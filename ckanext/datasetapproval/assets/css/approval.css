@@ -4,6 +4,16 @@
     flex-direction: row;
 }
 
+/* .breadcrumb */
+.breadcrumb .active a{
+  color: #006D84 !important;
+}
+
+/* .breadcrumb */
+.breadcrumb .active a{
+  color: #006D84 !important;
+}
+
 /* Main CSS */
 
 .main {
@@ -277,7 +287,7 @@
   line-height: 24px;
   letter-spacing: 0em;
   text-align: left;
-  font-family: Calibri;
+  font-family: Calibri, sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
@@ -289,21 +299,34 @@
 .form-group {
   display: block;
   position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
   cursor: pointer;
   font-size: 18px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  width: 548px;
+  box-sizing: content-box;
+}
+
+.form-label {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  font-family: Calibri , sans-serif;
+}
+
+.form-group input[type="text"] {
+  border-radius: 3px;
+  height: 37px;
 }
 
 .checkbox label input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
-  font-family: Calibri;
+  font-family: Calibri , sans-serif;
   font-size: 12px;
   font-weight: 100;
   line-height: 20px;
@@ -328,7 +351,7 @@
 
 .resource-form-buttons {
   /* there are four buttons in the resource form */
-  /* the first button should be aligned left and other buttons should be aligned rigght*/
+  /* the first button should be aligned left and other buttons should be aligned right*/
 
   display: flex;
   justify-content: space-between;
@@ -411,3 +434,350 @@
 .sub-items li label::after {
   content: none;
 }
+
+/* Scheming multiple select with sublists */
+.multi-select ul, .multi-select ul .sub-items {
+  list-style: none; /* Removes list bullets */
+  padding-left: 0; /* Removes list padding */
+  margin-left: 0; /* Aligns with the multi-select container */
+}
+
+/* Main category title styles */
+/* Resets */
+.multi-select,
+.multi-select ul,
+.multi-select ul .sub-items {
+  list-style: none; /* Removes bullets */
+  padding-left: 0; /* Removes indentation */
+  margin: 0; /* Removes default margin */
+  margin-left: 10px; /* Indents the main category labels */
+}
+
+/* Styles for the main category labels and toggle arrow */
+.multi-select > ul > li > label {
+  cursor: pointer; /* Indicates the element is clickable */
+  vertical-align: middle; /* Aligns with the toggle arrow */
+  font-weight: normal; /* No bold font */
+}
+
+.toggle-sublist {
+  cursor: pointer; /* Indicates it's clickable */
+  user-select: none; /* Prevents text selection */
+  margin-right: 5px; /* Spacing between arrow and label */
+}
+
+/* Styles for sub-items list */
+.multi-select .sub-items {
+  display: none; /* Hide by default */
+  margin-top: 5px; /* Space between category label and sublist items */
+  padding-left: 30px; /* Aligns sublist items with the main items */
+}
+
+/* Styles for sublist items (labels and checkboxes) */
+.sub-items li {
+  display: flex;
+  align-items: center; /* Center aligns items vertically */
+  margin-bottom: 5px; /* Space between sublist items */
+}
+
+.sub-items li input[type="checkbox"] {
+  width: auto; /* Adjusts checkbox width */
+  margin-right: 10px; /* Space between checkbox and label */
+  margin-left: 20px; /* Indent checkbox to align with sublist items */
+}
+
+.sub-items li label {
+  font-weight: normal; /* No bold font */
+  white-space: nowrap; /* Ensures label text does not wrap */
+}
+
+/* Remove the :after content on labels, if it exists */
+.sub-items li label::after {
+  content: none;
+}
+
+/* Scheming multiple select with sublists */
+.multi-select ul, .multi-select ul .sub-items {
+  list-style: none; /* Removes list bullets */
+  padding-left: 0; /* Removes list padding */
+  margin-left: 0; /* Aligns with the multi-select container */
+}
+
+/* Main category title styles */
+/* Resets */
+.multi-select,
+.multi-select ul,
+.multi-select ul .sub-items {
+  list-style: none; /* Removes bullets */
+  padding-left: 0; /* Removes indentation */
+  margin: 0; /* Removes default margin */
+  margin-left: 10px; /* Indents the main category labels */
+}
+
+/* Styles for the main category labels and toggle arrow */
+.multi-select > ul > li > label {
+  cursor: pointer; /* Indicates the element is clickable */
+  vertical-align: middle; /* Aligns with the toggle arrow */
+  font-weight: normal; /* No bold font */
+}
+
+.toggle-sublist {
+  cursor: pointer; /* Indicates it's clickable */
+  user-select: none; /* Prevents text selection */
+  margin-right: 5px; /* Spacing between arrow and label */
+}
+
+/* Styles for sub-items list */
+.multi-select .sub-items {
+  display: none; /* Hide by default */
+  margin-top: 5px; /* Space between category label and sublist items */
+  padding-left: 30px; /* Aligns sublist items with the main items */
+}
+
+/* Styles for sublist items (labels and checkboxes) */
+.sub-items li {
+  display: flex;
+  align-items: center; /* Center aligns items vertically */
+  margin-bottom: 5px; /* Space between sublist items */
+}
+
+.sub-items li input[type="checkbox"] {
+  width: auto; /* Adjusts checkbox width */
+  margin-right: 10px; /* Space between checkbox and label */
+  margin-left: 20px; /* Indent checkbox to align with sublist items */
+}
+
+.sub-items li label {
+  font-weight: normal; /* No bold font */
+  white-space: nowrap; /* Ensures label text does not wrap */
+}
+
+/* Remove the :after content on labels, if it exists */
+.sub-items li label::after {
+  content: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 6px 16px;
+  height: 32px;
+  border-radius: 5px;
+  font-family: Calibri , sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  margin-left: 17px;
+  gap: 2px;
+}
+
+.btn-primary {
+  background: #006D84;
+}
+
+.btn-default {
+  background: #FFFFFF;
+  border: 2px solid #006D84;
+  color: #006D84;
+}
+
+.btn-default:hover, .btn-default:focus {
+  border-color: #006D84;
+  background-color: #FAFAFA;
+  color: #006D84;
+}
+
+.no-nav .col-md-9 {
+  width: 100%;
+}
+
+.row {
+  background-color: transparent;
+}
+
+/* Start Organizations Page */
+.row:has(form#organization-search-form) {
+  border: 2px solid #006D84;
+  border-radius: 5px;
+}
+
+.row:has(form#organization-search-form)::before {
+  display: none;
+}
+
+.row:has(form#organization-search-form) aside {
+  border-right: 1px solid #006D84;
+}
+
+.row:has(form#organization-search-form) .module-heading {
+  background-color: transparent;
+  border-color: #006D84;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 12px;
+}
+
+.row:has(form#organization-search-form) .module-heading i {
+  margin-right: 2px;
+}
+
+.row:has(form#organization-search-form) .module-content p {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  padding: 12px 0px;
+}
+
+form#organization-search-form select{
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+form#organization-search-form input {
+  border: 2px solid #006D84;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 10px 26px;
+}
+
+form#organization-search-form input  + .input-group-btn{
+  display: none;
+}
+
+form#organization-search-form + ul.media-grid{
+  background-color: #E1E1E1;
+  border-radius: 5px;
+  padding: 24px;
+}
+
+form#organization-search-form + ul.media-grid li {
+  border-radius: 5px;
+}
+/* End Organizations Page */
+
+/* Start Single organization page */
+.row:has(header.module-content.page-header){
+  border: 2px solid #006D84;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.row:has(header.module-content.page-header) aside {
+  padding: 10px 0;
+  border-right: 2px solid #006D84;
+}
+
+.row:has(header.module-content.page-header) aside h1{
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.row:has(header.module-content.page-header) aside h1 + p{
+  font-style: italic;
+  font-weight: 400;
+  font-size: 12px;
+  color: #4E4E4E;
+}
+
+.row:has(header.module-content.page-header) aside .nums{
+  border-top: 1px solid #006D84;
+  border-bottom: 1px solid #006D84;;
+}
+
+.row:has(header.module-content.page-header) aside .nums{
+  border-top: 1px solid #006D84;
+  border-bottom: 1px solid #006D84;;
+}
+
+.row:has(header.module-content.page-header) aside dd span{
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 49px;
+  color: #3D3D3D;
+}
+
+.row:has(header.module-content.page-header) aside .filters h2{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+  border:none;
+  background-color: transparent;
+}
+
+.row:has(header.module-content.page-header) aside .filters h2 i{
+  display: none;
+}
+
+.row:has(header.module-content.page-header) aside .filters h2 + p{
+  padding-top: 0;
+  padding-bottom: 16px;
+}
+
+.row:has(header.module-content.page-header) div.primary{
+  padding: 10px 0;
+}
+
+header.module-content.page-header, header.module-content.page-header .nav-tabs{
+  border-bottom: none;
+}
+
+.row:has(header.module-content.page-header) .nav-tabs li a{
+  background: #D9D9D9;
+  color: #000;
+  border-radius: 5px 5px 0px 0px;
+  margin-right: 10px;
+  padding: 10px 24px;
+  font-family: Calibri,sans-serif;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.row:has(header.module-content.page-header) .nav-tabs li.active a{
+  background: #006D84;
+  color: #fff;
+  font-weight: 700;
+}
+
+.row:has(header.module-content.page-header) .nav-tabs li a i{
+  color: #006D84;
+}
+
+.row:has(header.module-content.page-header) .nav-tabs li.active a i{
+  color: #fff;
+}
+
+form#organization-datasets-search-form select{
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+form#organization-datasets-search-form input {
+  border: 2px solid #006D84;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 10px 26px;
+}
+
+form#organization-datasets-search-form input  + .input-group-btn{
+  display: none;
+}
+
+form#organization-datasets-search-form + ul.media-grid{
+  background-color: #E1E1E1;
+  border-radius: 5px;
+  padding: 24px;
+}
+
+form#organization-datasets-search-form + ul.media-grid li {
+  border-radius: 5px;
+}
+
+/* End Single organization Page */
