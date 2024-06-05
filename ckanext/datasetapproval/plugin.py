@@ -67,7 +67,11 @@ class DatasetapprovalPlugin(
 
     # IBlueprint
     def get_blueprint(self):
-        blueprints = [views.dataset.registred_views(), views.review.registred_views(), views.user.registred_views()]
+        blueprints = [
+                views.dataset.registred_views(),
+                views.review.registred_views(),
+                views.user.registred_views(),
+                views.admin.registred_views()]
         blueprints.extend(views.resource.registred_views())
         return blueprints
 
