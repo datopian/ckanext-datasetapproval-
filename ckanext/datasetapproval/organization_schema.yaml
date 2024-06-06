@@ -1,0 +1,29 @@
+scheming_version: 1
+group_type: institution
+about_url: http://github.com/ckan/ckanext-scheming
+
+fields:
+- field_name: title
+  label: Name
+  validators: ignore_missing unicode_safe
+  form_snippet: large_text.html
+  form_attrs:
+    data-module: slug-preview-target
+  form_placeholder: My institution
+
+- field_name: name
+  label: URL
+  validators: not_empty unicode_safe name_validator group_name_validator
+  form_snippet: slug.html
+  form_placeholder: my-institution
+
+- field_name: notes
+  label: Description
+  form_snippet: markdown.html
+  form_placeholder: A little information about my group...
+  
+- field_name: url
+  label: picture
+  preset: organization_url_upload
+  form_placeholder: http://example.com/my-camel-photo.jpg
+  upload_label: Image
