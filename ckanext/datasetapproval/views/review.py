@@ -13,6 +13,7 @@ import ckan.lib.helpers as h
 from ckan.plugins import toolkit as tk
 from ckan.views.dataset import url_with_params
 from ckan.views.user import _extra_template_variables
+from ckan import logic
 
 blueprint = Blueprint(
     "approval",
@@ -70,6 +71,13 @@ class DatasetReviewView(MethodView):
 
         extra_vars = _extra_template_variables(context, data_dict)
 
+        try:
+            user_has_review_permission = tk.check_access("dataset_review", context, None)
+        except logic.NotAuthorized:
+            user_has_review_permission = False
+
+        if user_has_review_permission:
+            context["ignore_auth"] = True
         dataset_result = tk.get_action("package_search")(context, search_dict)
 
         extra_vars["user_dict"].update(
