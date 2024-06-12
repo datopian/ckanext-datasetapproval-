@@ -13,9 +13,18 @@ def dataset_review(context, data_dict):
     )
     owner_org = dataset_dict.get("owner_org")
     user_id = tk.current_user.id if tk.current_user else None
+
+    user = tk.current_user if tk.current_user else None
+    if user:
+        user_has_review_permission = False
+
+        plugin_extras = user.plugin_extras
+        if plugin_extras:
+            user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+
     capacity = authz.users_role_for_group_or_org(owner_org, user_id)
     is_org_admin = capacity == "admin"
-    if is_org_admin or tk.current_user.sysadmin:
+    if is_org_admin or tk.current_user.sysadmin or user_has_review_permission:
         return {"success": True}
     else:
         return {
@@ -35,9 +44,14 @@ def package_update(context, data_dict):
         )
         creator_user_id = previous_data_dict.get("creator_user_id")
 
+        user_has_review_permission = False
+        dataset_review_authz = dataset_review(context, { "dataset_id": package_id })
+        if dataset_review_authz["success"]:
+            user_has_review_permission = True
+
         if (
             previous_data_dict.get("state") == "inreview"
-            and previous_data_dict.get("creator_user_id") == tk.current_user.id
+            and (previous_data_dict.get("creator_user_id") == tk.current_user.id and not user_has_review_permission)
         ):
             return {
                 "success": False,
@@ -82,6 +96,11 @@ def package_update(context, data_dict):
                     return {
                         "success": True
                     }
+
+            if user_has_review_permission:
+                return {
+                        "success": True,
+                        }
 
             # If it got to that line, user doesn't have permission to
             # update datasets
