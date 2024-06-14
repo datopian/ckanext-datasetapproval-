@@ -36,11 +36,12 @@ def publishing_check(context, data_dict):
     data_dict["state"] = "draft"
     return data_dict
 
+
 def _add_or_update_org(context, package_dict):
     # Add the package to the org group
     if "org" in package_dict and len(package_dict["org"]) > 0:
         old_package_dict = tk.get_action("package_show")(
-                context, {"id": package_dict.get("id")}
+            context, {"id": package_dict.get("id")}
         )
 
         package_groups = [{"name": package_dict["org"]}]
@@ -57,28 +58,26 @@ def _add_or_update_org(context, package_dict):
             if len(groups) > 0:
                 groups_names = list(map(lambda g: g.get("name"), groups))
                 orgs = tk.get_action("group_list")(
-                        context, {"all_fields": True, "type": "org", "groups": groups_names}
+                    context, {"all_fields": True, "type": "org", "groups": groups_names}
                 )
                 orgs_names = list(map(lambda g: g.get("name"), orgs))
                 non_orgs_names = list(set(groups_names) - set(orgs_names))
-                package_groups.extend([{ "name": name } for name in non_orgs_names ])
+                package_groups.extend([{"name": name} for name in non_orgs_names])
 
         package_dict["groups"] = package_groups
 
     return package_dict
 
+
 def get_dataset_schema():
     context = {
-        'model': model,
-        'session': model.Session,
-        'user': None,
-        'ignore_auth': True
+        "model": model,
+        "session": model.Session,
+        "user": None,
+        "ignore_auth": True,
     }
 
-    data_dict = {
-        'type': 'dataset',
-        'expanded': True
-    }
+    data_dict = {"type": "dataset", "expanded": True}
 
     try:
         schema_data = scheming_dataset_schema_show(context, data_dict)
@@ -87,13 +86,14 @@ def get_dataset_schema():
         print(f"Error retrieving dataset schema: {e}")
         return None
 
+
 def clean_dictionary(data_dict):
     schema = get_dataset_schema()
     keys = []
 
-    for field_info in schema.get('dataset_fields', []):
+    for field_info in schema.get("dataset_fields", []):
         if "repeating_subfields" in field_info.keys():
-            keys.append(field_info['field_name'])
+            keys.append(field_info["field_name"])
 
     cleaned_dict = dict(data_dict)
 
@@ -109,6 +109,7 @@ def clean_dictionary(data_dict):
                 del cleaned_dict[key]
 
     return cleaned_dict
+
 
 @tk.chained_action
 def package_create(up_func, context, data_dict):
@@ -154,15 +155,18 @@ def user_show(up_func, context, data_dict):
 
             plugin_extras = user_obj.plugin_extras
             if plugin_extras:
-                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+                user_has_review_permission = plugin_extras.get(
+                    "user_has_review_permission", False
+                )
 
             user_is_sysadmin = user_obj.sysadmin
 
             # User has review permission if:
             # 1) The user is a sysadmin
             # 2) The user has "user_has_review_permission=True" in plugin_extras
-            final_result["user_has_review_permission"] = \
+            final_result["user_has_review_permission"] = (
                 user_has_review_permission or user_is_sysadmin
+            )
 
     return final_result
 
@@ -218,17 +222,18 @@ def dataset_review(context, data_dict):
 
 
 def _org_autocomplete(context, data_dict):
-    q = data_dict['q']
-    limit = data_dict.get('limit', 20)
-    model = context['model']
+    q = data_dict["q"]
+    limit = data_dict.get("limit", 20)
+    model = context["model"]
 
-    query = model.Group.search_by_name_or_title(q, group_type="org",
-                                                is_org=False, limit=limit)
+    query = model.Group.search_by_name_or_title(
+        q, group_type="org", is_org=False, limit=limit
+    )
 
     org_list = []
     for group in query.all():
         result_dict = {}
-        for k in ['id', 'name', 'title']:
+        for k in ["id", "name", "title"]:
             result_dict[k] = getattr(group, k)
         org_list.append(result_dict)
 
@@ -237,5 +242,5 @@ def _org_autocomplete(context, data_dict):
 
 @tk.side_effect_free
 def org_autocomplete(context, data_dict):
-    logic.check_access('group_autocomplete', context, data_dict)
+    logic.check_access("group_autocomplete", context, data_dict)
     return _org_autocomplete(context, data_dict)
