@@ -87,12 +87,13 @@ class DatasetapprovalPlugin(
         labels = super(DatasetapprovalPlugin, self).get_user_dataset_labels(user_obj)
 
         user_has_review_permission = False
-        plugin_extras = user_obj.plugin_extras
-        if plugin_extras:
-            user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+        if not user_obj.is_anonymous:
+            plugin_extras = user_obj.plugin_extras
+            if plugin_extras:
+                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
 
-        if user_has_review_permission:
-            labels.append("review-permission")
+            if user_has_review_permission:
+                labels.append("review-permission")
 
         return labels
 
