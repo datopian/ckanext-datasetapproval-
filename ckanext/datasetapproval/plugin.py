@@ -11,6 +11,7 @@ from ckan.lib.plugins import DefaultPermissionLabels
 
 from ckanext.datasetapproval import views
 from ckanext.datasetapproval.actions import get_dataset_schema
+from ckan import logic
 
 log = logging.getLogger(__name__)
 
@@ -82,8 +83,25 @@ class DatasetapprovalPlugin(
             "package_update": auth.package_update,
         }
 
+    def get_user_dataset_labels(self, user_obj):
+        labels = super(DatasetapprovalPlugin, self).get_user_dataset_labels(user_obj)
+
+        user_has_review_permission = False
+        if not user_obj.is_anonymous:
+            plugin_extras = user_obj.plugin_extras
+            if plugin_extras:
+                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+
+            if user_has_review_permission:
+                labels.append("review-permission")
+
+        return labels
+
     def get_dataset_labels(self, dataset_obj):
         labels = super(DatasetapprovalPlugin, self).get_dataset_labels(dataset_obj)
+
+        labels.append("review-permission")
+
         user_id = None
         if tk.current_user and tk.current_user.is_authenticated:
             user_id = tk.c.userobj.id

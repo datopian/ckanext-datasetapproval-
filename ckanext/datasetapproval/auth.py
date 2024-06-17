@@ -7,21 +7,39 @@ from ckan import model
 log = logging.getLogger(__name__)
 
 
-def dataset_review(context, data_dict):
+def dataset_review(context, data_dict=None):
+    user = tk.current_user if tk.current_user else None
+    if user and not user.is_anonymous:
+        user_has_review_permission = False
+
+        plugin_extras = user.plugin_extras
+        if plugin_extras:
+            user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+
+        if user_has_review_permission or user.sysadmin:
+            return {"success": True}
+        elif data_dict is None or "dataset_id" not in data_dict:
+            # If the user is not sysadmin and doesn't have the review permission
+            # and no dataset id was provided
+            return {"success": False, "message": "User doesn't have review permission."}
+    else:
+        return {"success": False, "message": "Anonymous cannot review a dataset"}
+
     dataset_dict = tk.get_action("package_show")(
         context, {"id": data_dict.get("dataset_id")}
     )
     owner_org = dataset_dict.get("owner_org")
-    user_id = tk.current_user.id if tk.current_user else None
-    capacity = authz.users_role_for_group_or_org(owner_org, user_id)
+
+    capacity = authz.users_role_for_group_or_org(owner_org, user.id)
     is_org_admin = capacity == "admin"
-    if is_org_admin or tk.current_user.sysadmin:
+    if is_org_admin:
         return {"success": True}
     else:
         return {
             "success": False,
             "msg": "User does not have permission to review dataset",
         }
+
 
 @tk.auth_allow_anonymous_access
 def package_update(context, data_dict):
@@ -35,9 +53,14 @@ def package_update(context, data_dict):
         )
         creator_user_id = previous_data_dict.get("creator_user_id")
 
+        user_has_review_permission = False
+        dataset_review_authz = dataset_review(context, { "dataset_id": package_id })
+        if dataset_review_authz["success"]:
+            user_has_review_permission = True
+
         if (
             previous_data_dict.get("state") == "inreview"
-            and previous_data_dict.get("creator_user_id") == tk.current_user.id
+            and (previous_data_dict.get("creator_user_id") == tk.current_user.id and not user_has_review_permission)
         ):
             return {
                 "success": False,
@@ -82,6 +105,11 @@ def package_update(context, data_dict):
                     return {
                         "success": True
                     }
+
+            if user_has_review_permission:
+                return {
+                        "success": True,
+                        }
 
             # If it got to that line, user doesn't have permission to
             # update datasets
