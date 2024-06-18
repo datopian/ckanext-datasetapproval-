@@ -485,6 +485,19 @@ dataset_fields:
   display_snippet: null
   validators: ignore_missing
 
+- field_name: import_done
+  label: import_done
+  form_snippet: null
+  display_snippet: null
+  validators: ignore_missing
+
+- field_name: cron
+  label: cron
+  form_snippet: null
+  display_snippet: null
+  validators: ignore_missing scheming_valid_json_object
+  output_validators: scheming_load_json
+
 
 resource_fields:
 

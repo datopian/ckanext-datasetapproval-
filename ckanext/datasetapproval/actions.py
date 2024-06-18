@@ -1,5 +1,6 @@
 import logging
 import ckan.authz as authz
+from datetime import datetime
 
 from ckan.plugins import toolkit as tk
 from ckanext.datasetapproval import mailer
@@ -185,6 +186,13 @@ def publish_dataset(context, id):
 
     if is_user_admin or is_sysadmin:
         data_dict["state"] = "active"
+        data_dict["import_done"] = True
+        data_dict["cron"] = {
+            "state": None,
+            "message": "",
+            "submitted_date": datetime.now().isoformat(),
+            "completed_date": "",
+        }
     else:
         mailer.mail_package_review_request_to_admins(context, data_dict)
         data_dict["state"] = "inreview"
@@ -208,12 +216,28 @@ def dataset_review(context, data_dict):
     states = {"reject": "rejected", "approve": "active"}
     mailer.mail_package_approve_reject_notification_to_editors(id, action)
     try:
+        pkg_dict = {
+            "id": id,
+            "state": states[action],
+        }
+        if action == "approve":
+            pkg_dict.update(
+                {
+                    "import_done": False,
+                    "cron": {
+                        "state": None,
+                        "message": "",
+                        "submitted_date": datetime.now().isoformat(),
+                        "completed_date": "",
+                    },
+                }
+            )
         tk.get_action("package_patch")(
             {
                 **context,
                 "allow_publish": True,
             },
-            {"id": id, "state": states[action]},
+            pkg_dict,
         )
     except Exception as e:
         raise tk.ValidationError(str(e))
@@ -226,8 +250,9 @@ def _org_autocomplete(context, data_dict):
     limit = data_dict.get("limit", 20)
     model = context["model"]
 
-    query = model.Group.search_by_name_or_title(q, group_type="institution",
-                                                is_org=False, limit=limit)
+    query = model.Group.search_by_name_or_title(
+        q, group_type="institution", is_org=False, limit=limit
+    )
 
     org_list = []
     for group in query.all():
