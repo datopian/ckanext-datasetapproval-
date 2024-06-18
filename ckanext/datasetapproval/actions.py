@@ -226,9 +226,8 @@ def _org_autocomplete(context, data_dict):
     limit = data_dict.get("limit", 20)
     model = context["model"]
 
-    query = model.Group.search_by_name_or_title(
-        q, group_type="org", is_org=False, limit=limit
-    )
+    query = model.Group.search_by_name_or_title(q, group_type="institution",
+                                                is_org=False, limit=limit)
 
     org_list = []
     for group in query.all():

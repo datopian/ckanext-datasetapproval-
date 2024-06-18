@@ -10,21 +10,30 @@ dataset_fields:
   label: Title
   preset: title
   validators: not_empty unicode_safe
+  react_input: text
 
 - field_name: name
   label: URL
   preset: dataset_slug
   form_placeholder: eg. my-dataset
+  react_input: dataset_slug
+
+- field_name: institution
+  label: Institution
+  preset: org_autocomplete
+  react_input: institution
 
 - field_name: tag_string
   label: Keywords
   preset: tag_string_autocomplete
   form_placeholder: eg. economy, mental health, government
+  react_input: tags
 
 - field_name: theme
   label: Theme
   form_snippet: multiple_select_sublists.html
   display_snippet: multiple_choice_sublists_links.html
+  react_input: multi_select_sublists
   validators: not_empty unicode_safe
   choices:
   - value: gemet
@@ -167,6 +176,7 @@ dataset_fields:
 
 - field_name: subject
   label: Subject
+  react_input: multi_select
   form_snippet: multiple_select.html
   display_snippet: multiple_choice_links.html
   form_placeholder: The iso topic category, eg. https://inspire.ec.europa.eu/metadata-codelist/TopicCategory
@@ -237,6 +247,7 @@ dataset_fields:
 
 - field_name: contact_points
   label: Contact points
+  react_input: repeating_subfields
   repeating_label: Contact point
   repeating_subfields:
   - field_name: first_name
@@ -250,6 +261,7 @@ dataset_fields:
 
 - field_name: creators
   label: Creators
+  react_input: repeating_subfields
   repeating_label: Creator
   repeating_subfields:
   - field_name: first_name
@@ -267,6 +279,7 @@ dataset_fields:
 
 - field_name: contributors
   label: Contributors
+  react_input: repeating_subfields
   repeating_label: Contributor
   repeating_subfields:
   - field_name: first_name
@@ -295,6 +308,7 @@ dataset_fields:
 
 - field_name: notes
   label: Description
+  react_input: markdown
   form_snippet: markdown.html
   form_placeholder: eg. Some useful notes about the data
   validators: not_empty unicode_safe
@@ -321,6 +335,7 @@ dataset_fields:
 
 - field_name: releaseDate
   label: Release date
+  react_input: date
   display_snippet: date.html
 
 # - filed_name: has_version
@@ -338,6 +353,7 @@ dataset_fields:
   label: Language
   validators: not_empty
   preset: select
+  react_input: select
   choices:
   - value: en
     label: English
@@ -346,25 +362,30 @@ dataset_fields:
 
 - field_name: conforms_to
   label: Conforms to
+  react_input: text
   form_snippet: text.html
 
 - field_name: provenance
   label: Provenance
   preset: json_object
+  react_input: json
 
 - field_name: source
   label: Source
   form_placeholder: http://example.com/dataset.json
   display_property: foaf:homepage
   display_snippet: link.html
+  react_input: url
 
 - field_name: spatial
   label: Spatial
   preset: json_object
+  react_input: json
 
 - field_name: dataset_status
   label: Status
   preset: select
+  react_input: select
   choices:
   - value: complete
     label: COMPLETE
@@ -376,6 +397,7 @@ dataset_fields:
 - field_name: is_referenced_by
   label: Is referenced by
   preset: select
+  react_input: select
   choices:
   - value: algorithm_documentation
     label: ALGORITHM DOCUMENTATION
@@ -438,10 +460,12 @@ dataset_fields:
   label: Version notes
   form_snippet: markdown.html
   form_placeholder: eg. Some useful notes about the data
+  react_input: markdown
   validators: not_empty unicode_safe
 
 - field_name: license_id
   label: License
+  react_input: license
   form_snippet: license.html
   help_text: License definitions and additional information can be found at http://opendefinition.org/
 
