@@ -498,6 +498,11 @@ dataset_fields:
   validators: ignore_missing scheming_valid_json_object
   output_validators: scheming_load_json
 
+- field_name: import_source
+  label: import_source
+  form_snippet: null
+  display_snippet: null
+  validators: ignore_missing
 
 resource_fields:
 
