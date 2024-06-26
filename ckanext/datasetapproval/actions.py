@@ -188,7 +188,7 @@ def publish_dataset(context, id):
         data_dict["state"] = "active"
         data_dict["import_done"] = True
         data_dict["cron"] = {
-            "state": None,
+            "state": "queued",
             "message": "",
             "submitted_date": datetime.now().isoformat(),
             "completed_date": "",
@@ -225,7 +225,7 @@ def dataset_review(context, data_dict):
                 {
                     "import_done": False,
                     "cron": {
-                        "state": None,
+                        "state": "queued",
                         "message": "",
                         "submitted_date": datetime.now().isoformat(),
                         "completed_date": "",
