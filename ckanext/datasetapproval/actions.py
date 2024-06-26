@@ -40,16 +40,14 @@ def publishing_check(context, data_dict):
 
 def _add_or_update_org(context, package_dict):
     # Add the package to the org group
-    if "org" in package_dict and len(package_dict["org"]) > 0:
+    if "institution" in package_dict and len(package_dict["institution"]) > 0:
         old_package_dict = tk.get_action("package_show")(
             context, {"id": package_dict.get("id")}
         )
 
-        package_groups = [{"name": package_dict["org"]}]
+        package_groups = [{"name": package_dict["institution"]}]
         if old_package_dict:
             groups = old_package_dict.get("groups", [])
-            log.error(groups)
-
             orgs_names = []
             non_orgs_names = []
 
@@ -59,7 +57,7 @@ def _add_or_update_org(context, package_dict):
             if len(groups) > 0:
                 groups_names = list(map(lambda g: g.get("name"), groups))
                 orgs = tk.get_action("group_list")(
-                    context, {"all_fields": True, "type": "org", "groups": groups_names}
+                    context, {"all_fields": True, "type": "institution", "groups": groups_names}
                 )
                 orgs_names = list(map(lambda g: g.get("name"), orgs))
                 non_orgs_names = list(set(groups_names) - set(orgs_names))
@@ -68,7 +66,6 @@ def _add_or_update_org(context, package_dict):
         package_dict["groups"] = package_groups
 
     return package_dict
-
 
 def get_dataset_schema():
     context = {
