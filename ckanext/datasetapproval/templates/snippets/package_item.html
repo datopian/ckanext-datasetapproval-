@@ -7,7 +7,7 @@
         <span class="badge bg-danger">{{ _('Deleted') }}</span>
     {% elif package.get('state', '') == 'inreview' and  (h.is_dataset_owner(package, c.userobj.id) or h.is_dataset_collaborator(package, c.userobj.id)) %}
         <span class="badge bg-warning">{{ _('In review') }}</span>
-    {% elif package.get('state', '') in ['inreview', 'pending'] or h.check_access("dataset_review", {"dataset_id": package.id}) %}
+    {% elif package.get('state', '') in ['inreview', 'pending']  %}
         <span class="badge bg-warning">{{ _('Pending') }}</span>
     {% elif package.get('state', '') == 'rejected' %}
         <span class="badge bg-danger">{{ _('Rejected') }}</span>
