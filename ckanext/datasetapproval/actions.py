@@ -220,7 +220,7 @@ def dataset_review(context, data_dict):
         if action == "approve":
             pkg_dict.update(
                 {
-                    "import_done": False,
+                    "import_done": True,
                     "cron": {
                         "state": "queued",
                         "message": "",

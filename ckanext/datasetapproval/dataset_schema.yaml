@@ -489,7 +489,8 @@ dataset_fields:
   label: import_done
   form_snippet: null
   display_snippet: null
-  validators: ignore_missing
+  validators: ignore_missing boolean_validator
+  output_validators: boolean_validator
 
 - field_name: cron
   label: cron
