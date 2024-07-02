@@ -59,7 +59,7 @@ class CreateView(BaseCreateView):
                     logic.tuplize_dict(logic.parse_params(tk.request.form))
                 )
             )
-             # if the user agreed to the terms and conditions
+            # if the user agreed to the terms and conditions
             if term_agree:
                 data_dict["terms_agree"] = True
         except dict_fns.DataError:
@@ -68,7 +68,9 @@ class CreateView(BaseCreateView):
             if save_draft:
                 data_dict["state"] = "draft"
                 action = "package_update" if alread_saved else "package_create"
-                pkg_dict = tk.get_action(action)({**context, "allow_state_change": True }, data_dict)
+                pkg_dict = tk.get_action(action)(
+                    {**context, "allow_state_change": True}, data_dict
+                )
                 tk.h.flash_success(tk._("Dataset saved as draft"))
                 return self.get(package_type, data=pkg_dict)
         except tk.NotAuthorized:

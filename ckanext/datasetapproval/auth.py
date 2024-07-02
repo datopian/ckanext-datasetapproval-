@@ -14,7 +14,9 @@ def dataset_review(context, data_dict=None):
 
         plugin_extras = user.plugin_extras
         if plugin_extras:
-            user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+            user_has_review_permission = plugin_extras.get(
+                "user_has_review_permission", False
+            )
 
         if user_has_review_permission or user.sysadmin:
             return {"success": True}
@@ -54,13 +56,13 @@ def package_update(context, data_dict):
         creator_user_id = previous_data_dict.get("creator_user_id")
 
         user_has_review_permission = False
-        dataset_review_authz = dataset_review(context, { "dataset_id": package_id })
+        dataset_review_authz = dataset_review(context, {"dataset_id": package_id})
         if dataset_review_authz["success"]:
             user_has_review_permission = True
 
-        if (
-            previous_data_dict.get("state") == "inreview"
-            and (previous_data_dict.get("creator_user_id") == tk.current_user.id and not user_has_review_permission)
+        if previous_data_dict.get("state") in ["inreview"] and (
+            previous_data_dict.get("creator_user_id") == tk.current_user.id
+            and not user_has_review_permission
         ):
             return {
                 "success": False,
@@ -70,28 +72,24 @@ def package_update(context, data_dict):
         if not current_user.is_anonymous and not current_user.sysadmin:
             # Creator can always edit
             if creator_user_id == current_user.id:
-                return {
-                    "success": True
-                }
+                return {"success": True}
 
             # Users with review permission can always edit
             plugin_extras = current_user.plugin_extras
             if plugin_extras:
-                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+                user_has_review_permission = plugin_extras.get(
+                    "user_has_review_permission", False
+                )
                 if user_has_review_permission:
-                    return {
-                        "success": True
-                    }
+                    return {"success": True}
 
             # By default, if unowned datasets and create_dataset_if_not_in_organization
             # are enabled, any user can update a dataset. We have to override that.
             package_collaborators = tk.get_action("package_collaborator_list")
-            privileged_context = {
-                "ignore_auth": True,
-                "model": model
-            }
-            collaborators_list = package_collaborators(privileged_context,
-                                                       {"id": package_id})
+            privileged_context = {"ignore_auth": True, "model": model}
+            collaborators_list = package_collaborators(
+                privileged_context, {"id": package_id}
+            )
 
             for collaborator in collaborators_list:
                 collaborator_id = collaborator.get("user_id")
@@ -99,17 +97,17 @@ def package_update(context, data_dict):
 
                 # If user is collaborator with capacity admin or editor,
                 # update is allowed
-                if collaborator_id == current_user.id \
-                        and collaborator_capacity in ["admin", "editor"]:
+                if collaborator_id == current_user.id and collaborator_capacity in [
+                    "admin",
+                    "editor",
+                ]:
 
-                    return {
-                        "success": True
-                    }
+                    return {"success": True}
 
             if user_has_review_permission:
                 return {
-                        "success": True,
-                        }
+                    "success": True,
+                }
 
             # If it got to that line, user doesn't have permission to
             # update datasets

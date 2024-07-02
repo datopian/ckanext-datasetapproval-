@@ -4,7 +4,6 @@ from ckan import model
 from ckan.common import config
 from ckan.plugins import toolkit
 from ckan.lib.mailer import mail_user
-from ckan.lib.base import render
 from ckan.logic.action.get import member_list as core_member_list
 
 log = logging.getLogger(__name__)
@@ -31,7 +30,7 @@ def mail_package_review_request_to_admins(
         # Merged org admin and sysadmin so that sysadmin also gets the email.
 
         admins = list(set(org_admin + [admin[0] for admin in sysadmins]))
-        
+
     for admin_id in admins:
         user = model.User.get(admin_id)
         if user.email:

@@ -15,6 +15,8 @@ from ckan.views.dataset import url_with_params
 from ckan.views.user import _extra_template_variables
 from ckan import logic
 
+log = logging.getLogger(__name__)
+
 blueprint = Blueprint(
     "approval",
     __name__,

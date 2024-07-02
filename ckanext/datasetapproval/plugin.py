@@ -32,9 +32,9 @@ class DatasetapprovalPlugin(
         schema = get_dataset_schema()
         field_names = []
 
-        for field_info in schema.get('dataset_fields', []):
+        for field_info in schema.get("dataset_fields", []):
             if "repeating_subfields" in field_info.keys():
-                field_names.append(field_info['field_name'])
+                field_names.append(field_info["field_name"])
 
         for field_name in field_names:
             if field_name in data_dict and data_dict[field_name] is not None:
@@ -56,7 +56,7 @@ class DatasetapprovalPlugin(
             "dataset_review": actions.dataset_review,
             "publish_dataset": actions.publish_dataset,
             "org_autocomplete": actions.org_autocomplete,
-            "user_show": actions.user_show
+            "user_show": actions.user_show,
         }
 
     # ITemplateHelpers
@@ -69,10 +69,11 @@ class DatasetapprovalPlugin(
     # IBlueprint
     def get_blueprint(self):
         blueprints = [
-                views.dataset.registred_views(),
-                views.review.registred_views(),
-                views.user.registred_views(),
-                views.admin.registred_views()]
+            views.dataset.registred_views(),
+            views.review.registred_views(),
+            views.user.registred_views(),
+            views.admin.registred_views(),
+        ]
         blueprints.extend(views.resource.registred_views())
         return blueprints
 
@@ -90,7 +91,9 @@ class DatasetapprovalPlugin(
         if user_obj and not user_obj.is_anonymous:
             plugin_extras = user_obj.plugin_extras
             if plugin_extras:
-                user_has_review_permission = plugin_extras.get("user_has_review_permission", False)
+                user_has_review_permission = plugin_extras.get(
+                    "user_has_review_permission", False
+                )
 
             if user_has_review_permission:
                 labels.append("review-permission")
@@ -111,9 +114,11 @@ class DatasetapprovalPlugin(
             capacity = authz.users_role_for_group_or_org(dataset_obj.owner_org, user_id)
             is_org_admin = capacity == "admin"
             # Editor shouldn't be able to collaborate on a dataset
-            if dataset_obj.creator_user_id != user_id and dataset_obj.state not in [
-                "active"
-            ] and not is_org_admin:
+            if (
+                dataset_obj.creator_user_id != user_id
+                and dataset_obj.state not in ["active"]
+                and not is_org_admin
+            ):
                 return []
 
         return labels
