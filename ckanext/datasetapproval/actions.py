@@ -57,7 +57,8 @@ def _add_or_update_org(context, package_dict):
             if len(groups) > 0:
                 groups_names = list(map(lambda g: g.get("name"), groups))
                 orgs = tk.get_action("group_list")(
-                    context, {"all_fields": True, "type": "institution", "groups": groups_names}
+                    context,
+                    {"all_fields": True, "type": "institution", "groups": groups_names},
                 )
                 orgs_names = list(map(lambda g: g.get("name"), orgs))
                 non_orgs_names = list(set(groups_names) - set(orgs_names))
@@ -66,6 +67,7 @@ def _add_or_update_org(context, package_dict):
         package_dict["groups"] = package_groups
 
     return package_dict
+
 
 def get_dataset_schema():
     context = {
