@@ -505,6 +505,11 @@ dataset_fields:
   display_snippet: null
   validators: ignore_missing
 
+- field_name: state
+  label: state
+  form_snippet: null
+  display_snippet: null
+
 resource_fields:
 
 - field_name: url
