@@ -43,77 +43,65 @@ def dataset_review(context, data_dict=None):
         }
 
 
+@tk.auth_sysadmins_check
 @tk.auth_allow_anonymous_access
 def package_update(context, data_dict):
-    # This check doesn't allow to edit dataset
-    # which is in alredy in review state
-    if data_dict:
-        current_user = tk.current_user
-        package_id = data_dict.get("id")
-        previous_data_dict = tk.get_action("package_show")(
-            context, {"id": data_dict.get("id")}
-        )
-        creator_user_id = previous_data_dict.get("creator_user_id")
 
-        user_has_review_permission = False
-        dataset_review_authz = dataset_review(context, {"dataset_id": package_id})
-        if dataset_review_authz["success"]:
-            user_has_review_permission = True
+    current_user = tk.current_user
+    is_sysadmin = current_user.is_anonymous or current_user.sysadmin
+    package_id = data_dict.get("id")
+    previous_data_dict = tk.get_action("package_show")(context, {"id": package_id})
+    creator_user_id = previous_data_dict.get("creator_user_id")
+    current_state = previous_data_dict.get("state")
 
-        if previous_data_dict.get("state") in ["inreview"] and (
-            previous_data_dict.get("creator_user_id") == tk.current_user.id
+    user_has_review_permission = dataset_review(context, {"dataset_id": package_id})[
+        "success"
+    ]
+
+    def _is_sysadmin_and_dataset_active():
+        """Check if the user is a sysadmin and the dataset is active"""
+        return is_sysadmin and current_state == "active"
+
+    def _is_dataset_under_review_or_active():
+        """Check if the dataset is under review and the user is the creator"""
+        return (
+            current_state in ["inreview", "active"]
+            and creator_user_id == current_user.id
             and not user_has_review_permission
-        ):
-            return {
-                "success": False,
-                "msg": "User cannot update dataset while it is in review",
-            }
+        )
 
-        if not current_user.is_anonymous and not current_user.sysadmin:
-            # Creator can always edit
-            if creator_user_id == current_user.id:
-                return {"success": True}
+    def _is_creator_or_has_review_permission():
+        """Check if the user is the creator or has review permission"""
+        return creator_user_id == current_user.id or user_has_review_permission
 
-            # Users with review permission can always edit
-            plugin_extras = current_user.plugin_extras
-            if plugin_extras:
-                user_has_review_permission = plugin_extras.get(
-                    "user_has_review_permission", False
-                )
-                if user_has_review_permission:
-                    return {"success": True}
+    def _is_collaborator_with_permission():
+        """Check if the user is a collaborator with permission to update the dataset"""
+        package_collaborators = tk.get_action("package_collaborator_list")
+        privileged_context = {"ignore_auth": True, "model": model}
+        collaborators_list = package_collaborators(
+            privileged_context, {"id": package_id}
+        )
 
-            # By default, if unowned datasets and create_dataset_if_not_in_organization
-            # are enabled, any user can update a dataset. We have to override that.
-            package_collaborators = tk.get_action("package_collaborator_list")
-            privileged_context = {"ignore_auth": True, "model": model}
-            collaborators_list = package_collaborators(
-                privileged_context, {"id": package_id}
-            )
+        for collaborator in collaborators_list:
+            if collaborator.get("user_id") == current_user.id and collaborator.get(
+                "capacity"
+            ) in ["admin", "editor"]:
+                return True
+        return False
 
-            for collaborator in collaborators_list:
-                collaborator_id = collaborator.get("user_id")
-                collaborator_capacity = collaborator.get("capacity")
+    if _is_sysadmin_and_dataset_active():
+        return {"success": False, "msg": "Not authorized to update dataset"}
 
-                # If user is collaborator with capacity admin or editor,
-                # update is allowed
-                if collaborator_id == current_user.id and collaborator_capacity in [
-                    "admin",
-                    "editor",
-                ]:
+    if _is_dataset_under_review_or_active():
+        return {
+            "success": False,
+            "msg": "User cannot update dataset while it is in review",
+        }
 
-                    return {"success": True}
+    if _is_creator_or_has_review_permission():
+        return {"success": True}
 
-            if user_has_review_permission:
-                return {
-                    "success": True,
-                }
+    if _is_collaborator_with_permission():
+        return {"success": True}
 
-            # If it got to that line, user doesn't have permission to
-            # update datasets
-            return {
-                "success": False,
-                "msg": "User not allowed to update this dataset",
-            }
-
-    return core_package_update(context, data_dict)
+    return {"success": False, "msg": "User not allowed to update this dataset"}
