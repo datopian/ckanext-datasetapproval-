@@ -41,9 +41,11 @@ def publishing_check(context, data_dict):
 def _add_or_update_org(context, package_dict):
     # Add the package to the org group
     if "institution" in package_dict and len(package_dict["institution"]) > 0:
-        old_package_dict = tk.get_action("package_show")(
-            context, {"id": package_dict.get("id")}
-        )
+        old_package_dict = None
+        if package_dict.get("id"):
+            old_package_dict = tk.get_action("package_show")(
+                context, {"id": package_dict.get("id")}
+            )
 
         package_groups = [{"name": package_dict["institution"]}]
         if old_package_dict:
