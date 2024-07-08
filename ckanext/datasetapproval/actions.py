@@ -5,6 +5,7 @@ from datetime import datetime
 from ckan.plugins import toolkit as tk
 from ckanext.datasetapproval import mailer
 from ckan import logic
+from ckan.common import asbool
 
 from ckanext.scheming.logic import scheming_dataset_schema_show
 
@@ -267,3 +268,20 @@ def _org_autocomplete(context, data_dict):
 def org_autocomplete(context, data_dict):
     logic.check_access("group_autocomplete", context, data_dict)
     return _org_autocomplete(context, data_dict)
+
+@tk.side_effect_free
+@tk.chained_action
+def package_show(up_func, context, data_dict):
+    result = up_func(context, data_dict)
+
+    if result:
+        is_embargoed = asbool(result["is_embargoed"])
+        if is_embargoed:
+            update_permission = authz.is_authorized("package_update", context, { "id": result["id"], "previous_data_dict": result })
+            user_can_edit = update_permission["success"]
+            if not user_can_edit:
+                result["resources"] = []
+
+
+    return result
+

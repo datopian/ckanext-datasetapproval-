@@ -51,6 +51,7 @@ class DatasetapprovalPlugin(
     # IActions
     def get_actions(self):
         return {
+            "package_show": actions.package_show,
             "package_create": actions.package_create,
             "package_update": actions.package_update,
             "dataset_review": actions.dataset_review,

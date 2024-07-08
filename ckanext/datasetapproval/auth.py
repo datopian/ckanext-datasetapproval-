@@ -48,15 +48,22 @@ def dataset_review(context, data_dict=None):
 def package_update(context, data_dict):
 
     current_user = tk.current_user
-    is_sysadmin = current_user.is_anonymous or current_user.sysadmin
+    is_sysadmin = not current_user.is_anonymous and current_user.sysadmin
+    is_anon = current_user.is_anonymous
     package_id = data_dict.get("id")
-    previous_data_dict = tk.get_action("package_show")(context, {"id": package_id})
+    # Implemented this "previous_data_dict" behavior so that
+    # an infinite recursion won't happen when package_update
+    # auth function is called from "package_show"
+    previous_data_dict = data_dict.get("previous_data_dict") if  "previous_data_dict" in data_dict else tk.get_action("package_show")(context, {"id": package_id})
     creator_user_id = previous_data_dict.get("creator_user_id")
     current_state = previous_data_dict.get("state")
 
     user_has_review_permission = dataset_review(context, {"dataset_id": package_id})[
         "success"
     ]
+
+    def _is_anon():
+        return is_anon
 
     def _is_sysadmin_and_dataset_active():
         """Check if the user is a sysadmin and the dataset is active"""
@@ -89,8 +96,11 @@ def package_update(context, data_dict):
                 return True
         return False
 
-    if _is_sysadmin_and_dataset_active():
+    if _is_anon():
         return {"success": False, "msg": "Not authorized to update dataset"}
+
+    if _is_sysadmin_and_dataset_active():
+        return {"success": True}
 
     if _is_dataset_under_review_or_active():
         return {

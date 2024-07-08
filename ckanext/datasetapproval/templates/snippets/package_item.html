@@ -14,5 +14,10 @@
     {% elif package.get('state', '').startswith('deleted') %}
         <span class="label label-danger">{{ _('Deleted') }}</span>
     {% endif %}
+
+    {% if package.get('is_embargoed') == "true" %}
+        <span class="badge bg-info">{{ _('Embargoed') }}</span>
+    {% endif %}
+
     {{ h.popular('recent views', package.tracking_summary.recent, min=10) if package.tracking_summary }}
 {% endblock %}

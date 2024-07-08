@@ -510,6 +510,14 @@ dataset_fields:
   form_snippet: null
   display_snippet: null
 
+- field_name: is_embargoed
+  label: Is embargoed?
+  react_input: checkbox
+
+- field_name: embargoed_until
+  label: Embargo end date
+  react_input: date
+
 resource_fields:
 
 - field_name: url
