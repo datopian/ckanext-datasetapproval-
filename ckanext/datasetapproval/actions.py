@@ -269,19 +269,41 @@ def org_autocomplete(context, data_dict):
     logic.check_access("group_autocomplete", context, data_dict)
     return _org_autocomplete(context, data_dict)
 
+def _package_hide_fields(package):
+    package["resources"] = []
+    package["num_resources"] = 0
+
 @tk.side_effect_free
 @tk.chained_action
 def package_show(up_func, context, data_dict):
     result = up_func(context, data_dict)
 
     if result:
-        is_embargoed = asbool(result["is_embargoed"])
+        is_embargoed = asbool(result.get("is_embargoed", False))
         if is_embargoed:
             update_permission = authz.is_authorized("package_update", context, { "id": result["id"], "previous_data_dict": result })
             user_can_edit = update_permission["success"]
             if not user_can_edit:
-                result["resources"] = []
-
-
+                _package_hide_fields(result)
+                
     return result
 
+
+@tk.side_effect_free
+@tk.chained_action
+def package_search(up_func, context, data_dict):
+    result = up_func(context, data_dict)
+
+    if result:
+        packages = result.get("results", [])
+
+        for package in packages:
+            is_embargoed = asbool(package.get("is_embargoed", False))
+            if is_embargoed:
+                update_permission = authz.is_authorized("package_update", context, { "id": package["id"], "previous_data_dict": package })
+                user_can_edit = update_permission["success"]
+                if not user_can_edit:
+                    _package_hide_fields(package)
+    log.error(result)
+
+    return result

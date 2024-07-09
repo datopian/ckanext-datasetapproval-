@@ -58,6 +58,7 @@ class DatasetapprovalPlugin(
             "publish_dataset": actions.publish_dataset,
             "org_autocomplete": actions.org_autocomplete,
             "user_show": actions.user_show,
+            "package_search": actions.package_search
         }
 
     # ITemplateHelpers
